@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+<h2>Activities under {{ category.title }}</h2>
+
+<ul>
+  {% for activity in activities %}
+  <li>
+    <a href="{% url 'grammar_activity_detail' category.slug activity.name|slugify %}">
+      {{ activity.name }}
+    </a>
+  </li>
+  
+  {% empty %}
+    <li>No activities found under this category.</li>
+  {% endfor %}
+
+  {% for drag in draganddrop %}
+  <li>
+    <a href="{% url 'dragdrop_activity_detail' drag.slug %}">
+      {{ drag.name }}
+    </a>
+  </li>
+{% endfor %}
+
+  {% for pk in pick %}
+  <li>
+    <a href="{% url 'pick_words_activity_detail' category.slug pk.title|slugify %}">
+      {{ pk.title }}
+  </a>
+  </li>
+{% endfor %}
+
+
+</ul>
+{% endblock %}

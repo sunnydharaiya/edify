@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Read and Listen
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+  <div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">Read and Listen</h1>
+    {% for item in read_listen %}
+      <div class="mb-4">
+        <h2 class="h3 fw-semibold text-primary">{{ item.heading }}</h2>
+        <p class="text-muted">{{ item.text }}</p>
+        {% if item.audio %}
+         <audio src="{{ item.audio.url }}" controls></audio>
+        {% endif %}
+      </div>
+    {% endfor %}
+    {% if not read_listen %}
+      <p class="text-center text-muted">No items available.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('.play-pause-audio').click(function() {
+        const button = $(this);
+        const audioUrl = button.data('audio-url');
+        const audio = new Audio(audioUrl);
+        const isPlaying = button.data('playing') === true;
+
+        if (isPlaying) {
+          audio.pause();
+          audio.currentTime = 0;
+          button.data('playing', false);
+          button.find('.play-icon').removeClass('d-none');
+          button.find('.pause-icon').addClass('d-none');
+        } else {
+          audio.play();
+          button.data('playing', true);
+          button.find('.play-icon').addClass('d-none');
+          button.find('.pause-icon').removeClass('d-none');
+          audio.onended = function() {
+            button.data('playing', false);
+            button.find('.play-icon').removeClass('d-none');
+            button.find('.pause-icon').addClass('d-none');
+          };
+        }
+      });
+    });
+  </script>
+  {% endblock %}

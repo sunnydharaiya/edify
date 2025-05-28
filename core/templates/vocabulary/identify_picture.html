@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ activity.title }} - {{ category.name }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+<style>
+    .option-radio:disabled {
+      opacity: 0.7;
+    }
+    .form-check-label.correct {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .form-check-label.incorrect {
+      color: #dc3545;
+      font-weight: bold;
+    }
+  </style>
+{% load custom_filters %}
+  <div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">{{ activity.title }} - {{ category.name }}</h1>
+    <div class="row g-4">
+      {% for picture in pictures %}
+        <div class="col-md-4 identify-picture-section" data-picture-id="{{ picture.id }}">
+          <div class="card p-3 shadow-sm">
+            <h3 class="h5 fw-semibold text-center">{{ picture.activity.title }} ({{ picture.activity.category.name }})</h3>
+            {% if picture.image %}
+              <img src="{{ picture.image.url }}" alt="{{ picture.activity.title }}" class="img-fluid rounded mb-3">
+            {% else %}
+              <p class="text-center text-muted">No image available</p>
+            {% endif %}
+            <div class="d-flex flex-column gap-2">
+              {% for option in picture.options.all %}
+                <div class="form-check">
+                  <input 
+                    class="form-check-input option-radio" 
+                    type="radio" 
+                    name="options-{{ picture.id }}" 
+                    id="option-{{ option.id }}" 
+                    value="{{ option.option_text }}" 
+                    data-is-correct="{% if option.is_correct %}true{% else %}false{% endif %}"
+                    data-option-id="{{ option.id }}"
+                  >
+                  <label class="form-check-label" for="option-{{ option.id }}">{{ option.option_text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% if not pictures %}
+      <p class="text-center text-muted mt-4">No pictures available for this activity.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('.option-radio').on('change', function() {
+        const isCorrect = $(this).data('is-correct') === true;
+        const pictureSection = $(this).closest('.identify-picture-section');
+        const radios = pictureSection.find('.option-radio');
+        const label = $(this).next('.form-check-label');
+
+        radios.prop('disabled', true);
+        if (isCorrect) {
+          label.addClass('correct').removeClass('incorrect');
+          setTimeout(() => {
+            pictureSection.hide();
+            const nextSection = pictureSection.next('.identify-picture-section');
+            if (nextSection.length) {
+              nextSection.show();
+            } else {
+              $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
+            }
+          }, 1000);
+        } else {
+          label.addClass('incorrect').removeClass('correct');
+          setTimeout(() => {
+            $(this).prop('checked', false);
+            radios.prop('disabled', false);
+            label.removeClass('incorrect');
+          }, 1000);
+        }
+      });
+    });
+  </script>
+  {% endblock %}

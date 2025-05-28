@@ -1,0 +1,50 @@
+{% extends 'base.html' %} 
+{% block title %} Long Vowel Sound Activity {%endblock %} 
+{% block content %} 
+{% load static %} 
+{% load custom_filters %}
+
+<section class="program-details-section fix section-padding">
+  <div class="container">
+    <div class="program-details-wrapper">
+      <div class="row g-5">
+        
+          {% for sound in long_vowel_sounds %}
+          <div class="col-lg-4">
+          <div
+            class="vowel-item"
+            onclick="checkAnswer(this, '{{ sound.is_correct }}')"
+          >
+            <img src="{{ sound.image.url }}" width="100%" alt="{{ sound.word }}" />
+            <p>{{ sound.word }}</p>
+        </div>
+    </div>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  function checkAnswer(element, isCorrect) {
+    if (element.classList.contains("disabled")) return;
+
+    if (isCorrect === "True") {
+      element.classList.add("correct");
+      element.classList.remove("incorrect");
+    } else {
+      element.classList.add("incorrect");
+      element.classList.remove("correct");
+    }
+
+    element.classList.add("disabled");
+  }
+</script>
+<style>
+    .correct {
+        background-color: #00ff00;
+    }
+    .incorrect {
+        background-color: #ff0000;
+    }
+</style>
+{% endblock %}

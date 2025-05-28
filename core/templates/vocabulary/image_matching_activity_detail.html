@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+{{ image_matching_activity.title }} - {{ category.name }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+
+  <style>
+    .image-container {
+      position: relative;
+      height: 150px;
+      border: 2px solid #6c757d;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .image-container img {
+      max-height: 120px;
+      object-fit: contain;
+    }
+    .image-container.selected {
+      border-color: #0d6efd;
+      background-color: #e7f1ff;
+    }
+    .image-container.matched {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .matched-pairs li {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .matched-pairs img {
+      max-height: 50px;
+      object-fit: contain;
+    }
+  </style>
+
+<div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">{{ image_matching_activity.title }} - {{ category.name }}</h1>
+    <div class="row g-4 mb-4">
+      <!-- Image 1 Column -->
+      <div class="col-md-6">
+        <h3 class="h4 fw-semibold text-center mb-3">Compound Noun Part 1</h3>
+        {% for pair in image_word_pairs.all|shuffle %}
+          <div 
+            class="image-container mb-3" 
+            data-pair-id="{{ pair.id }}" 
+            data-image-type="1" 
+            data-word="{{ pair.word_1 }}"
+            data-image-url="{{ pair.image_1.url }}"
+          >
+            <img src="{{ pair.image_1.url }}" alt="{{ pair.word_1 }}">
+          </div>
+        {% endfor %}
+      </div>
+      <!-- Image 2 Column -->
+      <div class="col-md-6">
+        <h3 class="h4 fw-semibold text-center mb-3">Compound Noun Part 2</h3>
+        {% for pair in image_word_pairs.all|shuffle %}
+          <div 
+            class="image-container mb-3" 
+            data-pair-id="{{ pair.id }}" 
+            data-image-type="2" 
+            data-word="{{ pair.word_2 }}"
+            data-image-url="{{ pair.image_2.url }}"
+          >
+            <img src="{{ pair.image_2.url }}" alt="{{ pair.word_2 }}">
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Matched Pairs List -->
+    <div class="matched-pairs mt-4">
+      <h3 class="h4 fw-semibold text-center mb-3">Matched Compound Nouns</h3>
+      <ul class="list-unstyled text-center"></ul>
+    </div>
+    {% if not image_word_pairs %}
+      <p class="text-center text-muted mt-4">No image-word pairs available for this activity.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      let selectedImages = [];
+      let matchedPairs = 0;
+      const totalPairs = {{ image_word_pairs.count }};
+
+      $('.image-container').on('click', function() {
+        if (!$(this).hasClass('matched') && selectedImages.length < 2 && !$(this).hasClass('selected')) {
+          $(this).addClass('selected');
+          selectedImages.push($(this));
+
+          if (selectedImages.length === 2) {
+            const [first, second] = selectedImages;
+            const firstPairId = first.data('pair-id');
+            const secondPairId = second.data('pair-id');
+            const firstType = first.data('image-type');
+            const secondType = second.data('image-type');
+
+            if (firstPairId === secondPairId && firstType !== secondType) {
+              first.addClass('matched');
+              second.addClass('matched');
+              const word1 = first.data('word');
+              const word2 = second.data('word');
+              const image1 = first.data('image-url');
+              const image2 = second.data('image-url');
+              $('.matched-pairs ul').append(
+                `<li>
+                  <img src="${image1}" alt="${word1}">
+                  <img src="${image2}" alt="${word2}">
+                  <span>${word1} & ${word2}</span>
+                </li>`
+              );
+              matchedPairs++;
+              if (matchedPairs === totalPairs) {
+                $('<p class="text-center text-success fw-bold mt-4">All compound nouns matched!</p>').insertAfter('.matched-pairs');
+              }
+            } else {
+              setTimeout(() => {
+                first.removeClass('selected');
+                second.removeClass('selected');
+              }, 1000);
+            }
+            selectedImages = [];
+          }
+        }
+      });
+    });
+  </script>
+  {% endblock %}

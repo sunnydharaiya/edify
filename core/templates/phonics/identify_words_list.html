@@ -1,0 +1,100 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+  Identify Words Activity - {{ level|title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+  <style>
+    .option-radio:disabled {
+      opacity: 0.7;
+    }
+    .form-check-label.correct {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .form-check-label.incorrect {
+      color: #dc3545;
+      font-weight: bold;
+    }
+  </style>
+  <div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">Identify Words Activity - {{ level|title }}</h1>
+
+    {% for word in identify_words %}
+      <div class="mb-5 identify-word-section" data-word-id="{{ word.id }}">
+        <h2 class="h3 fw-semibold text-center text-primary mb-4">{{ word.name }}</h2>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          {% for option in indentidy_options %}
+            {% if option.identify_word == word %}
+              <div class="form-check form-check-inline">
+                <input 
+                  class="form-check-input option-radio" 
+                  type="radio" 
+                  name="options-{{ word.id }}" 
+                  id="option-{{ option.id }}" 
+                  value="{{ option.option }}" 
+                  data-is-correct="{% if option.is_correct %}true{% else %}false{% endif %}"
+                  data-option-id="{{ option.id }}"
+                >
+                <label class="form-check-label" for="option-{{ option.id }}">{{ option.option }}</label>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6">
+            {% if word.image %}
+              <img src="{{ word.image.url }}" alt="{{ word.name }}" class="img-fluid rounded mx-auto d-block">
+            {% else %}
+              <p class="text-center text-muted">No image available</p>
+            {% endif %}
+          </div>
+          <div class="col-md-3">
+            <!-- Empty col-3 for activity space -->
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if not identify_words %}
+      <p class="text-center text-muted mt-4">No words available for this level.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('.option-radio').on('change', function() {
+        const isCorrect = $(this).data('is-correct') === true;
+        const wordSection = $(this).closest('.identify-word-section');
+        const radios = wordSection.find('.option-radio');
+        const label = $(this).next('.form-check-label');
+
+        radios.prop('disabled', true);
+        if (isCorrect) {
+          label.addClass('correct').removeClass('incorrect');
+          setTimeout(() => {
+            wordSection.hide();
+            const nextSection = wordSection.next('.identify-word-section');
+            if (nextSection.length) {
+              nextSection.show();
+            } else {
+              $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
+            }
+          }, 1000);
+        } else {
+          label.addClass('incorrect').removeClass('correct');
+          setTimeout(() => {
+            $(this).prop('checked', false);
+            radios.prop('disabled', false);
+            label.removeClass('incorrect');
+          }, 1000);
+        }
+      });
+    });
+  </script>
+{% endblock %}

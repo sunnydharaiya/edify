@@ -1,0 +1,29 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+Blend
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<h1>{{ level|capfirst }} Level Blends</h1>
+
+{% if blends %}
+    <ul>
+    {% for blend in blends %}
+        <li>
+            <a href="{% url 'blend_for_list' blend.id %}">
+                {{ blend.type }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No blends found for this level.</p>
+{% endif %}
+{% endblock %}

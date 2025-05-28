@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+
+<h2>{{ activity.name }}</h2>
+<p>From Category: {{ category.title }}</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<div class="container">
+    <div class="row">
+      {% for question in questions %}
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            {% if question.image %}
+              <img src="{{ question.image.url }}" class="card-img-top" alt="Question Image">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ question.question }}</h5>
+              <form class="option-form" data-question-id="{{ question.id }}">
+                {% for option in question.options.all %}
+                  <div class="form-check mb-1">
+                    <input class="form-check-input"
+                           type="radio"
+                           name="question{{ question.id }}"
+                           id="option{{ option.id }}"
+                           value="{{ option.id }}"
+                           data-correct="{{ option.is_correct|yesno:'true,false' }}">
+                    <label class="form-check-label" for="option{{ option.id }}">
+                      {{ option.option_text }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.form-check-input').on('change', function () {
+        const selected = $(this);
+        const isCorrect = selected.data('correct') === true || selected.data('correct') === 'true';
+        const form = selected.closest('form');
+  
+        // Disable all options in this question
+        form.find('input[type="radio"]').attr('disabled', true);
+  
+        // Highlight selected
+        if (isCorrect) {
+          selected.closest('.form-check').addClass('bg-success text-white');
+        } else {
+          selected.closest('.form-check').addClass('bg-danger text-white');
+          // Also highlight correct one
+          form.find('input[data-correct="true"]').each(function () {
+            $(this).closest('.form-check').addClass('bg-success text-white');
+          });
+        }
+      });
+    });
+  </script>
+    {% endblock %}

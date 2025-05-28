@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Prefix suffix
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+
+{% for activity in prefix_suffix_activities %}
+  <h2>{{ activity.title }} ({{ activity.get_type_display }})</h2>
+  <ul>
+    {% for word in activity.words.all %}
+      <li data-word-id="{{ word.id }}">
+        {% if activity.type == 'prefix' %}
+          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
+            <option value="">Select option</option>
+            {% for option in word.options.all %}
+              <option value="{{ option.id }}">{{ option.option_text }}</option>
+            {% endfor %}
+          </select>
+          <strong>{{ word.word_text }}</strong>
+
+        {% elif activity.type == 'suffix' %}
+          <strong>{{ word.word_text }}</strong>
+          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
+            <option value="">Select option</option>
+            {% for option in word.options.all %}
+              <option value="{{ option.id }}">{{ option.option_text }}</option>
+            {% endfor %}
+          </select>
+
+        {% else %}
+          <strong>{{ word.word_text }}</strong>
+          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
+            <option value="">Select option</option>
+            {% for option in word.options.all %}
+              <option value="{{ option.id }}">{{ option.option_text }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+        <span class="feedback"></span>
+      </li>
+    {% endfor %}
+  </ul>
+{% endfor %}
+
+
+<script>
+    document.querySelectorAll('.option-select').forEach(select => {
+      select.addEventListener('change', function () {
+        const selectedOptionId = this.value;
+        const correctOptionId = this.dataset.correct;
+        const fullWord = this.dataset.fullword;
+        const feedbackSpan = this.closest('li').querySelector('.feedback');
+    
+        // Reset previous feedback
+        this.classList.remove('wrong');
+        feedbackSpan.textContent = '';
+        feedbackSpan.className = 'feedback';
+    
+        if (selectedOptionId === correctOptionId) {
+          feedbackSpan.textContent = fullWord;
+          feedbackSpan.classList.add('correct-word');
+        } else {
+          this.classList.add('wrong');
+        }
+      });
+    });
+    </script>
+    <style>
+        .wrong {
+            border: 2px solid red;
+        }
+        .correct-word {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+    {% endblock %}

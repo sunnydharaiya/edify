@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ blog.title }}
+{% endblock %}
+
+{% block content %}
+{% load static  %}
+
+<section class="break-div"></section>
+
+<section class="news-section-3 fix section-padding">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-xl-12 col-lg-12 col-md-12 wow fadeInUp" data-wow-delay=".7s" style="visibility: visible; animation-delay: 0.7s; animation-name: fadeInUp;">
+                <div class="news-card-items mt-0">
+                    <div class="news-image">
+                        <img src="{{ blog.image.url }}" alt="img">
+                        <div class="news-layer-wrapper">
+                            <div class="news-layer-image" style="background-image: url('{{ blog.image.url }}');"></div>
+                            <div class="news-layer-image" style="background-image: url('{{ blog.image.url }}');"></div>
+                            <div class="news-layer-image" style="background-image: url('{{ blog.image.url }}');"></div>
+                            <div class="news-layer-image" style="background-image: url('{{ blog.image.url }}');"></div>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <ul>
+                            <li>
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ blog.created_at }}
+                            </li>
+                            <li>
+                                <i class="far fa-user"></i>
+                                By admin
+                            </li>
+                        </ul>
+                        <h3>
+                                {{ blog.title }}
+                        </h3>
+                        <p>{{ blog.content|safe }}</p>
+
+                        <a class="theme-btn mt-4" href="{% url 'blog_list' %}">Back to Blog List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

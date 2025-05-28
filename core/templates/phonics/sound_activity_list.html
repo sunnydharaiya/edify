@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Sound Activity
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+<h1>{{ position|capfirst }} Sound Activities for {{ level|capfirst }} Level</h1>
+
+{% if activity_options %}
+    <div class="row">
+    {% for item in activity_options %}
+        {% with activity=item.activity hidden_letter=item.hidden_letter options=item.options %}
+        <div class="game-instance col-md-4 text-center" style="margin-bottom:30px;" data-type="{{ position }}">
+            {% if activity.image %}
+                <img src="{{ activity.image.url }}" alt="{{ activity.word }}" width="150"
+                     style="border: 1px solid #25345342; height: 150px; margin-bottom: 15px; padding: 10px;">
+            {% endif %}
+            
+            <div class="word" style="font-size: 24px; margin-bottom: 15px;">
+                {% for letter in activity.word %}
+                    <span class="letter" data-letter="{{ letter|lower }}">{{ letter }}</span>
+                {% endfor %}
+                <span class="i-bg" onclick="speak('{{ activity.word }}')" style="cursor:pointer;">
+                    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+                </span>
+            </div>
+
+            <div class="alternatives" style="margin-top: 10px;">
+                {% for letter in options %}
+                    <button class="option" data-correct="{{ hidden_letter|lower }}">{{ letter }}</button>
+                {% endfor %}
+            </div>
+
+            {% if activity.audio %}
+                <audio controls style="margin-top: 15px; width: 100%;">
+                    <source src="{{ activity.audio.url }}" type="audio/mp3">
+                </audio>
+            {% endif %}
+        </div>
+        {% endwith %}
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No activities found for this category and position.</p>
+{% endif %}
+
+
+<script>
+document.querySelectorAll('.game-instance').forEach(gameInstance => {
+    const wordSpans = gameInstance.querySelectorAll('.word span.letter'); // letter spans only
+    const wordContainer = gameInstance.querySelector('.word');
+
+    // Get the position type: beginning, middle, ending
+    const type = gameInstance.dataset.type; // e.g. "beginning", "middle", "ending"
+    const totalLetters = wordSpans.length;
+
+    let indexToHide;
+    if (type === 'beginning') {
+        indexToHide = 0;
+    } else if (type === 'middle') {
+        indexToHide = Math.floor(totalLetters / 2);
+    } else if (type === 'ending') {
+        indexToHide = totalLetters - 1;
+    } else {
+        indexToHide = 0; // fallback
+    }
+
+    // The letter span to hide
+    const hiddenLetterSpan = wordSpans[indexToHide];
+    const correctLetter = hiddenLetterSpan.dataset.letter;
+
+    // Replace visible letter with underscore
+    hiddenLetterSpan.textContent = '_';
+    hiddenLetterSpan.classList.add('hidden-letter');
+
+    // Create a hidden correct letter span next to it
+    const correctLetterSpan = document.createElement('span');
+    correctLetterSpan.classList.add('correct-letter');
+    correctLetterSpan.style.display = 'none';
+    correctLetterSpan.textContent = correctLetter;
+    hiddenLetterSpan.parentNode.insertBefore(correctLetterSpan, hiddenLetterSpan.nextSibling);
+
+    // Setup buttons logic
+    const options = gameInstance.querySelectorAll('.option');
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            const selected = option.textContent.trim().toLowerCase();
+            if (selected === correctLetter.toLowerCase()) {
+                // Show correct letter, hide underscore
+                hiddenLetterSpan.style.display = 'none';
+                correctLetterSpan.style.display = 'inline-block';
+
+                wordContainer.style.backgroundColor = 'green';
+                wordContainer.style.color = 'white';
+
+                options.forEach(btn => btn.disabled = true);
+            } else {
+                option.classList.add('shake-animation');
+                option.style.border = '2px solid red';
+
+                setTimeout(() => {
+                    option.classList.remove('shake-animation');
+                    option.style.border = 'none';
+                }, 1000);
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.shake-animation {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0px); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0px); }
+}
+</style>
+{% endblock %}

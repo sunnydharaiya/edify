@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+
+    <style>
+        .square {
+            width: 35px;
+            height: 35px;
+            border: none;
+            display: inline-block;
+            position: relative;
+            text-transform: uppercase;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .square button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            text-align: center;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            background-color: transparent;
+            color: #000;
+        }
+        .square .num {
+            position: absolute;
+            top: 2px;
+            left: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-success-char-1 { background-color: #0207ff; }
+        .btn-success-char-2 { background-color: #000; }
+        .btn-success-char-3 { background-color: #560000; }
+        .btn-success-char-4 { background-color: #000; }
+        .btn-success-char-5 { background-color: #000; }
+        .btn-success-char-6 { background-color: #27617c; }
+        .btn-success-char-7 { background-color: #fd8f00; }
+        .btn-success-char-9 { background-color: #701414; }
+        .btn-success { background-color: green!important;color: #fff!important; }
+        .btn-danger { background-color: red!important;color: #fff!important; }
+    </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                {% for row in wordsearch_data %}
+                    <div class="row">
+                        {% for cell in row %}
+                            {% with parts=cell|split:"," %}
+                                {% with letter=parts.0 number=parts.1|default:"" %}
+                                    <div class="square">
+                                        <button class="btn btn-transparent char" data-letter="{{ number }}">{{ letter }}</button>
+                                        {% if number %}
+                                            <span class="num">{{ number }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endwith %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-lg-4">
+                <ul style="list-style: none">
+                    {% for bt in btn_text %}
+                        <li><button class="btn btn-primary mb-3">{{ bt.0 }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.char');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const letter = this.dataset.letter;
+                    if (this.classList.contains('btn-success') || this.classList.contains('btn-danger')) {
+                        this.classList.remove('btn-success', 'btn-danger');
+                        for (let i = 1; i <= 9; i++) {
+                            this.classList.remove(`btn-success-char-${i}`);
+                        }
+                        this.classList.add('btn-transparent');
+                    } else {
+                        this.classList.remove('btn-transparent');
+                        if (letter) {
+                            this.classList.add('btn-success', `btn-success-char-${letter}`);
+                        } else {
+                            this.classList.add('btn-danger');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

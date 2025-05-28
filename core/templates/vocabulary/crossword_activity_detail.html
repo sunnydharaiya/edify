@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+<style>
+        .square {
+            width: 35px;
+            height: 35px;
+            border: none;
+            display: inline-block;
+            position: relative;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .square input {
+            width: 40px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 1.5em;
+            border: 1px solid black;
+        }
+        .square .num {
+            position: absolute;
+            top: 2px;
+            left: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+    {% for row in crossword_data %}
+        <div class="row">
+            {% for cell in row %}
+                <div class="square">
+                    {% if cell %}
+                        <input type="text" class="char" maxlength="1" 
+                            data-letter="{{ cell.0 }}" 
+                            value="{% if cell.0 and cell.1 %}{{ cell.0 }}{% endif %}" 
+                            {% if cell.0 and cell.1 %}readonly style="background-color: lightgreen;"{% endif %}>
+                        {% if cell.1 %}
+                            <span class="num">{{ cell.1 }}</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <div class="row">
+        <div class="across col-lg-6">
+            <h3>Across</h3>
+            {% for row in across %}
+                <div class="row">
+                    {{ row.0 }}
+                </div>
+            {% endfor %}                                    
+        </div>
+        <div class="down col-lg-6">
+            <h3>Down</h3>
+            {% for row in down %}
+                <div class="row">
+                    {{ row.0 }}
+                </div>
+            {% endfor %}    
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.char');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const letter = this.dataset.letter;
+                    if (this.value.toUpperCase() === letter) {
+                        this.style.backgroundColor = 'lightgreen';
+                    } else {
+                        this.style.backgroundColor = 'lightcoral';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

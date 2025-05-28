@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Spelling Drag and Drop
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+            margin: 20px;
+            color: #333;
+        }
+        h3 {
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .all-words-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-li {
+            background-color: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            cursor: grab;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .btn-li:hover {
+            background-color: #d0e6ff;
+        }
+        .btn-li:active {
+            cursor: grabbing;
+        }
+        .btn-li[draggable="false"] {
+            cursor: default;
+            opacity: 0.6;
+            background-color: #b8e986;
+            border-color: #6aaf36;
+        }
+        .row.droppable-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .droppable-box {
+            border: 2px dashed #999;
+            border-radius: 8px;
+            min-height: 100px;
+            padding: 15px;
+            background: #fafafa;
+            transition: background-color 0.3s ease;
+        }
+        .droppable-box.dragover {
+            background-color: #d0f0fd;
+            border-color: #39a0ff;
+        }
+        .droppable-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+    </style>
+
+
+
+
+
+<section class="program-details-section fix section-padding">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                <div class="col-lg-12">
+                    
+
+    {% for group in spelling_groups %}
+    <h3>{{ group.name }}</h3>
+
+    <div class="all-words-box">
+        {% for stype in group.spelling_types.all %}
+            {% for word in stype.words.all %}
+                <div class="btn-li draggable" data-id="{{ stype.id }}" draggable="true" id="word-{{ word.id }}">
+                    {{ word.word }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <div class="row droppable-types">
+        {% for stype in group.spelling_types.all %}
+            <div class="droppable-box" id="stype-{{ stype.id }}">
+                <b>{{ stype.name }}</b>
+                <ul class="droppable-list"></ul>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let draggedItem = null;
+
+        document.querySelectorAll('.draggable').forEach(item => {
+            item.addEventListener('dragstart', e => {
+                draggedItem = e.target;
+                e.dataTransfer.effectAllowed = 'move';
+            });
+        });
+
+        document.querySelectorAll('.droppable-box').forEach(dropZone => {
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                
+                if (draggedItem) {
+                    if (draggedItem.getAttribute('data-id') === dropZone.id.replace('stype-', '')) {
+                        const ul = dropZone.querySelector('.droppable-list');
+                        ul.appendChild(draggedItem);
+                        draggedItem.setAttribute('draggable', 'false');
+                        draggedItem.style.cursor = 'default';
+                    } else {
+                        alert('Incorrect category! Try again.');
+                    }
+                    draggedItem = null;
+                }
+            });
+        });
+    });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Vowel Word List
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                      <tr class="table-dark">
+                        <th class="text-center">Word</th>
+                        <th class="text-center">Synonym</th>
+                        <th class="text-center">Antonym</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for activity in synonym_antonym_activities %}
+                        {% for pair in activity.word_pairs.all %}
+                          <tr>
+                            <td class="text-center align-middle">{{ pair.main_word|capfirst }}</td>
+                            <td class="drop-zone synonym-cell" data-expected="{{ pair.synonym }}"
+                                ondragover="event.preventDefault()"
+                                ondrop="handleDrop(event, this)">
+                            </td>
+                            <td class="drop-zone antonym-cell" data-expected="{{ pair.antonym }}"
+                                ondragover="event.preventDefault()"
+                                ondrop="handleDrop(event, this)">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="3" class="text-center">
+                              <div class="d-flex justify-content-center gap-2 mt-2">
+                                <div draggable="true"
+                                     class="drag-option btn btn-outline-primary btn-sm"
+                                     data-expected="{{ pair.synonym }}"
+                                     ondragstart="handleDrag(event)">
+                                  {{ pair.synonym }}
+                                </div>
+                                <div draggable="true"
+                                     class="drag-option btn btn-outline-primary btn-sm"
+                                     data-expected="{{ pair.antonym }}"
+                                     ondragstart="handleDrag(event)">
+                                  {{ pair.antonym }}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  
+                
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    let draggedEl = null;
+    let originalParent = null;
+    
+    function handleDrag(event) {
+        draggedEl = event.target;
+        originalParent = draggedEl.parentElement;
+        event.dataTransfer.effectAllowed = 'move';
+    }
+    
+    function handleDrop(event, dropZone) {
+        event.preventDefault();
+    
+        const expected = dropZone.getAttribute('data-expected').trim();
+        const actual = draggedEl.innerText.trim();
+    
+        if (expected === actual) {
+            // Correct drop
+            dropZone.innerHTML = '';
+            dropZone.appendChild(draggedEl);
+            dropZone.classList.remove('border-danger');
+            dropZone.classList.add('border-success', 'fw-bold');
+        } else {
+            // Incorrect: revert to original place
+            originalParent.appendChild(draggedEl);
+            dropZone.classList.add('border-danger');
+            setTimeout(() => dropZone.classList.remove('border-danger'), 1000);
+        }
+    }
+    </script>
+
+<style>
+    .drop-zone {
+      min-height: 40px;
+      border: 2px dashed #ccc;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
+      transition: border 0.3s;
+    }
+    .drag-option {
+      cursor: grab;
+    }
+    </style>
+    
+    
+{% endblock %}

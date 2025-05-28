@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Missing Alphabet
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                {% for missing_word in missing_words %}
+                    <div class="col-md-2 mb-4">
+                        <div class="card p-3 shadow-sm">
+                            {% if missing_word.image %}
+                                <img width="150" src="{{ missing_word.image.url }}" alt="{{ missing_word.word }}" >
+                            {% endif %}
+                            <div class="word-container text-center" data-word="{{ missing_word.word|upper }}">
+                                {% for letter in missing_word.word %}
+                                    <span class="letter-element" data-letter="{{ letter|upper }}" data-index="{{ forloop.counter0 }}">
+                                        {{ letter|upper }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function getRandomIndices(arrayLength, count) {
+        const indices = [];
+        while (indices.length < count && indices.length < arrayLength) {
+            const randomIndex = Math.floor(Math.random() * arrayLength);
+            if (!indices.includes(randomIndex)) {
+                indices.push(randomIndex);
+            }
+        }
+        return indices;
+    }
+
+    function initializeGame() {
+        document.querySelectorAll('.word-container').forEach(container => {
+            const word = container.dataset.word;
+            const letterElements = container.querySelectorAll('.letter-element');
+            
+            // Get 2 random indices to hide (or fewer if word is shorter)
+            const hiddenIndices = getRandomIndices(word.length, Math.min(2, word.length));
+            
+            letterElements.forEach((element, index) => {
+                if (hiddenIndices.includes(index)) {
+                    // Replace with input field
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'letter-input';
+                    input.maxLength = 1;
+                    input.dataset.letter = element.dataset.letter.toLowerCase();
+                    input.dataset.originalLetter = element.dataset.letter;
+                    
+                    // Add event listener for validation
+                    input.addEventListener('input', handleLetterInput);
+                    
+                    element.parentNode.replaceChild(input, element);
+                } else {
+                    // Keep as visible letter but style it
+                    element.className = 'consonant';
+                }
+            });
+        });
+    }
+
+    function handleLetterInput(e) {
+        const expectedLetter = e.target.dataset.letter;
+        const inputValue = e.target.value.toLowerCase();
+        
+        // Remove previous classes
+        e.target.classList.remove('correct', 'incorrect');
+        
+        if (inputValue === expectedLetter) {
+            e.target.classList.add('correct');
+        } else if (inputValue !== '') {
+            e.target.classList.add('incorrect');
+        }
+    }
+
+    // Initialize the game when the page loads
+    document.addEventListener('DOMContentLoaded', initializeGame);
+</script>
+
+<style>
+    .word-container {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .consonant {
+        font-size: 18px;
+        padding: 8px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        min-width: 30px;
+        text-align: center;
+        font-weight: bold;
+        border: 2px solid #e9ecef;
+    }
+
+    .letter-input {
+        width: 30px;
+        height: 38px;
+        text-align: center;
+        font-size: 18px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .letter-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .letter-input.correct {
+        border-color: #28a745;
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .letter-input.incorrect {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+</style>
+{% endblock %}

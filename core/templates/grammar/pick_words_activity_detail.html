@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+
+{% load custom_filters %}
+<h3>{{ activity.title }}</h3>
+<div class="col-md-12 mb-3">
+    {% for sentence in sentences %}
+        <div class="sentence">
+            <p>
+                {% for word in sentence.sentence|split:" " %}
+                    {% with matched_word=sentence.words.all|filter_word:word %}
+                        <button class="btn btn-primary word" data-word="{{ word }}" data-correct="{% if matched_word %}true{% else %}false{% endif %}">{{ word }}</button>
+                    {% endwith %}
+                {% endfor %}
+            </p>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+    .sentence {
+        margin-bottom: 20px;
+    }
+    .word {
+        margin: 5px;
+    }
+    .btn-success {
+        background-color: #28a745;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.word');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const isCorrect = this.dataset.correct === 'true';
+            if (this.classList.contains('btn-success') || this.classList.contains('btn-danger')) {
+                this.classList.remove('btn-success', 'btn-danger');
+                this.classList.add('btn-primary');
+            } else {
+                this.classList.remove('btn-primary');
+                if (isCorrect) {
+                    this.classList.add('btn-success');
+                } else {
+                    this.classList.add('btn-danger');
+                    setTimeout(() => {
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-primary');
+                    }, 1000);
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

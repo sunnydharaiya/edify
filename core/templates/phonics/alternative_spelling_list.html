@@ -1,0 +1,25 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+{{ alternative_spelling.name }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+{%for item in alternative_spelling%}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{% url 'alternative_spelling_detail' item.slug %}">{{ item.slug }}</a>
+        </h5>
+    </div>
+</div>
+{%endfor%}
+
+
+{% endblock %}

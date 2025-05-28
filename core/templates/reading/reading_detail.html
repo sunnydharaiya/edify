@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ reading.name }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+<section class="clases-section ">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-xl-12 wow fadeInUp" data-wow-delay=".3s">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <img src="{{ reading.image.url }}" width="100%" alt="img">
+                        {% for transcript in transcripts %}
+                        {% if transcript.audio_file %}
+                        <audio controls class="mt-3" width="100%">
+                            <source src="{{ transcript.audio_file.url }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="clases-content">
+                            <h4 class="mb-3">
+                                {{ reading.name }} - {{ reading.category.name }}
+                            </h4>
+                            {% for transcript in transcripts %}
+                            <p>{{ transcript.text }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row mt-5">
+                    <hr>
+                    <h5>True/False Activities</h5>
+                    <ul class="mt-3">
+                        {% for activity in true_false_activities %}
+                            <li id="activity-{{ forloop.counter }}" class="mb-4">
+                                <p>{{ activity.statement }}</p>
+                                <button 
+                                    onclick="checkAnswer('{{ activity.is_true }}', true, 'activity-{{ forloop.counter }}', this)" 
+                                    class="btn btn-outline-primary me-2">
+                                    True
+                                </button>
+                                <button 
+                                    onclick="checkAnswer('{{ activity.is_true }}', false, 'activity-{{ forloop.counter }}', this)" 
+                                    class="btn btn-outline-primary">
+                                    False
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <script>
+                        function checkAnswer(correctAnswer, userAnswer, elementId, clickedButton) {
+                            const listItem = document.getElementById(elementId);
+                    
+                            // Convert string to actual boolean
+                            const isCorrect = (correctAnswer === 'True'); // Directly compare with string 'True'
+                            
+                            // Set color based on the answer
+                            if (isCorrect === userAnswer) {
+                                listItem.classList.remove('bg-danger');
+                                listItem.classList.add('bg-success');
+                                clickedButton.classList.add('btn-success');
+                            } else {
+                                listItem.classList.remove('bg-success');
+                                listItem.classList.add('bg-danger');
+                                clickedButton.classList.add('btn-danger');
+                            }
+                    
+                            // Disable both buttons for that question
+                            const buttons = listItem.querySelectorAll('button');
+                            buttons.forEach(button => button.disabled = true);
+                        }
+                    </script>
+                </div>
+
+                <div class="row mt-5">
+                    <h5>Matching Pairs Activity</h5>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4>Questions</h4>
+                            <ul id="questions-list" class="list-group">
+                                {% for pair in matching_pairs %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center mb-2">
+                                    <span>{{ pair.question }}</span>
+                                    <div class="drop-slot border p-2 w-50 text-center" 
+                                         data-response="{{ pair.response }}"
+                                         data-index="{{ forloop.counter0 }}"
+                                         ondrop="drop(event)" 
+                                         ondragover="allowDrop(event)">
+                                         Drop Here
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            
+                        </div>
+                    
+                        <div class="col-md-6">
+                            <h4>Questions & Responses</h4>
+                    
+                    <ul id="responses-list" class="list-group d-flex flex-wrap">
+                    </ul>
+                    
+                    <button onclick="checkMatches()" class="btn btn-success mt-3">Check Answers</button>
+                    <button onclick="resetGame()" class="btn btn-secondary mt-3 ms-2">Reset</button>
+                    
+                    <script>
+                        // Example matching pairs JSON; in your template, pass from Django view
+                        const matchingPairs = {{ matching_pairs|safe }};
+                        
+                        const responsesList = document.getElementById("responses-list");
+                    
+                        // Shuffle function
+                        function shuffleArray(array) {
+                            return array.sort(() => Math.random() - 0.5);
+                        }
+                    
+                        // Load responses and make draggable
+                        function loadResponses() {
+                            responsesList.innerHTML = ''; // Clear old
+                            const shuffledResponses = shuffleArray(matchingPairs.map(p => p.response));
+                            shuffledResponses.forEach((response, index) => {
+                                const li = document.createElement("li");
+                                li.textContent = response;
+                                li.className = "list-group-item m-2 p-2 draggable border";
+                                li.draggable = true;
+                                li.id = `response-${index}`;
+                                
+                                li.addEventListener("dragstart", event => {
+                                    event.dataTransfer.setData("text", event.target.id);
+                                });
+                                responsesList.appendChild(li);
+                            });
+                        }
+                    
+                        // Allow drop
+                        function allowDrop(event) {
+                            event.preventDefault();
+                        }
+                    
+                        // Drop handler
+                        function drop(event) {
+                            event.preventDefault();
+                            const responseId = event.dataTransfer.getData("text");
+                            const draggedElem = document.getElementById(responseId);
+                    
+                            // Only allow if slot empty
+                            if(event.target.innerText === "Drop Here") {
+                                event.target.innerText = draggedElem.textContent;
+                                draggedElem.style.display = "none";
+                            }
+                        }
+                    
+                        // Check answers
+                        function checkMatches() {
+                            document.querySelectorAll(".drop-slot").forEach(slot => {
+                                const expected = slot.getAttribute("data-response");
+                                const selected = slot.innerText;
+                                if(selected === expected) {
+                                    slot.classList.add("bg-success", "text-white");
+                                    slot.classList.remove("bg-danger");
+                                } else {
+                                    slot.classList.add("bg-danger", "text-white");
+                                    slot.classList.remove("bg-success");
+                                }
+                            });
+                        }
+                    
+                        // Reset all
+                        function resetGame() {
+                            document.querySelectorAll(".drop-slot").forEach(slot => {
+                                slot.innerText = "Drop Here";
+                                slot.classList.remove("bg-success", "bg-danger", "text-white");
+                            });
+                            document.querySelectorAll(".draggable").forEach(elem => {
+                                elem.style.display = "block";
+                            });
+                        }
+                    
+                        // Initialize on load
+                        window.onload = loadResponses;
+                    
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>.bg-success {
+    background-color: #d4edda !important;
+    color: #155724;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.bg-danger {
+    background-color: #f8d7da !important;
+    color: #721c24;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.btn-outline-primary {
+    background-color: white;
+    border: 1px solid #007bff;
+    color: #007bff;
+    padding: 5px 15px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+.list-group-item {
+    cursor: pointer;
+}
+
+.response-slot {
+    border: 1px dashed #ccc;
+    padding: 5px;
+    text-align: center;
+    color: gray;
+    background-color: #f9f9f9;
+}
+
+</style>
+{% endblock %}

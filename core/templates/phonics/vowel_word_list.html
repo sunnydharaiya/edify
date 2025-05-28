@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Vowel Word List
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                              
+
+                {% for vowel in vowels %}
+                <audio controls style="width:100%;" class="mt-5">
+                    <source src="https://fdahealth-in-772473.hostingersite.com/edify/uploads/vowels/short-vowels.m4a" type="audio/mp3">
+                </audio>
+                    {% for word in vowel.vowel_words.all %}
+                        <div class="col-md-2 mb-4">
+                            <div class="card p-3 shadow-sm">
+                                {% if word.image %}
+                                            <img width="100%" src="{{ word.image.url }}" alt="{{ word.word }}" class="img-fluid">
+                                        {% endif %}
+                                <div class="word-container text-center">
+                                    {% for letter in word.word %}
+                                        
+                                        {% if letter|lower in 'aeiou' %}
+                                            <input type="text" class="vowel-input" maxlength="1" data-letter="{{ letter|lower }}">
+                                        {% else %}
+                                            <span class="consonant">{{ letter }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.vowel-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const expectedLetter = e.target.dataset.letter;
+            if (e.target.value.toLowerCase() === expectedLetter) {
+                e.target.classList.add('correct');
+                e.target.classList.remove('incorrect');
+            } else {
+                e.target.classList.add('incorrect');
+                e.target.classList.remove('correct');
+            }
+        });
+    });
+</script>
+
+<style>
+    .word-container {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .consonant {
+        font-size: 18px;
+        padding: 4px;
+    }
+
+    .vowel-input {
+        width: 30px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .vowel-input.correct {
+        border-color: #28a745;
+        background-color: #d4edda;
+    }
+
+    .vowel-input.incorrect {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+    }
+</style>
+{% endblock %}

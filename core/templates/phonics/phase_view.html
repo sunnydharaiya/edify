@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Phase Activity - {{ phase.phase }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+  <style>
+    .word-container {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .consonant {
+      font-size: 18px;
+      padding: 4px;
+    }
+
+    .vowel-input {
+      width: 30px;
+      text-align: center;
+      font-size: 18px;
+      border: 2px solid #ced4da;
+      border-radius: 4px;
+    }
+
+    .vowel-input.correct {
+      border-color: #28a745;
+      background-color: #d4edda;
+    }
+
+    .vowel-input.incorrect {
+      border-color: #dc3545;
+      background-color: #f8d7da;
+    }
+  </style>
+</head>
+  <div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">Phase Activity - {{ phase.phase }}</h1>
+
+    {% for phase_for in phase_fors %}
+      <div class="mb-5 phase-for-section" data-phase-for-id="{{ phase_for.id }}">
+        <h2 class="h3 fw-semibold text-center text-primary mb-4">----- {{ phase_for.name }} -----</h2>
+        <div class="row g-4 mb-4">
+          {% for word in phase_words %}
+          <ul>
+            {% if word.phase_for == phase_for %}
+              <li>{{ word.word }}</li>
+            {% endif %}
+          </ul>
+          {% endfor %}
+
+          
+          {% for word in phase_words %}
+            {% if word.phase_for == phase_for %}
+              <div class="col-md-4">
+                <div class="card p-3 shadow-sm">
+                  {% if word.image %}
+                    <img src="{{ word.image.url }}" alt="{{ word.word }}" class="img-fluid rounded mb-2">
+                  {% endif %}
+                  <div class="word-container">
+                    {% for letter in word.word %}
+                      {% if letter|lower in 'aeiou' %}
+                        <input type="text" class="vowel-input" maxlength="1" data-letter="{{ letter|lower }}">
+                      {% else %}
+                        <span class="consonant">{{ letter }}</span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  {% if word.audio %}
+                    <button 
+                      class="btn btn-primary btn-sm mt-2 mx-auto play-audio"
+                      data-audio-url="{{ word.audio.url }}"
+                    >
+                      <svg class="w-5 h-5 d-inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-4.243-3.536v7.072m-4.243-10.607a9 9 0 0112.728 12.728 9 9 0 01-12.728-12.728z"></path>
+                      </svg>
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if not phase_fors %}
+      <p class="text-center text-muted">No phase categories found for {{ phase.phase }}.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // Audio playback
+      $('.play-audio').click(function() {
+        var audioUrl = $(this).data('audio-url');
+        new Audio(audioUrl).play();
+      });
+
+      // Vowel input handling
+      $('.vowel-input').on('input', function() {
+        const expectedLetter = $(this).data('letter');
+        const card = $(this).closest('.card');
+        const inputs = card.find('.vowel-input');
+        const allCorrect = inputs.toArray().every(input => $(input).val().toLowerCase() === $(input).data('letter'));
+
+        if ($(this).val().toLowerCase() === expectedLetter) {
+          $(this).addClass('correct').removeClass('incorrect');
+          if (allCorrect) {
+            card.addClass('bg-success-subtle');
+            setTimeout(() => {
+              card.hide();
+              const phaseForSection = card.closest('.phase-for-section');
+              const remainingCards = phaseForSection.find('.card:visible');
+              if (remainingCards.length === 0) {
+                const nextPhaseFor = phaseForSection.next('.phase-for-section');
+                if (nextPhaseFor.length) {
+                  nextPhaseFor.find('.card').show();
+                } else {
+                  $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
+                }
+              }
+            }, 1000);
+          }
+        } else {
+          $(this).addClass('incorrect').removeClass('correct');
+          setTimeout(() => {
+            $(this).removeClass('incorrect').val('');
+          }, 1000);
+        }
+      });
+    });
+  </script>
+  {% endblock %}

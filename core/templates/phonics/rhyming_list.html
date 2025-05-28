@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Rhyming Activity - {{ level|title }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-8">Rhyming Activity - {{ level|title }}</h1>
+    
+    {% if rhyming %}
+      {% for rhyme in rhyming %}
+        <h2 class="text-2xl font-semibold text-center text-purple-600 mb-4">{{ rhyme.type }}</h2>
+        <!-- Drop Zones (RhymingFor Boxes) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {% for rf in rhyming_for %}
+            {% if rf.type == rhyme %}
+              <div
+                class="drop-zone bg-white p-4 rounded-lg shadow-md border-2 border-gray-300"
+                data-rhyming-for-id="{{ rf.id }}"
+              >
+                <h3 class="text-xl font-semibold text-center text-blue-600">{{ rf.name }}</h3>
+                <div class="word-list min-h-[100px]"></div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+        <!-- Draggable Words (RhymingWord) -->
+        <div class="word-pool flex flex-wrap gap-2 mb-8">
+          {% for word in rhyming_words|shuffle %}
+            {% if word.rhyming_for.type == rhyme %}
+              <div
+                class="word bg-yellow-200 px-3 py-1 rounded-full text-sm font-medium cursor-move select-none"
+                draggable="true"
+                data-word-id="{{ word.id }}"
+                data-rhyming-for-id="{{ word.rhyming_for.id }}"
+              >
+                {{ word.word }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% if not rhyming_words %}
+          <p class="text-center text-gray-600 mt-4">No words available for this rhyming type.</p>
+        {% endif %}
+        <hr class="my-8 border-gray-300">
+      {% endfor %}
+    {% else %}
+      <p class="text-center text-gray-600">No rhyming categories found for the {{ level }} level.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const words = document.querySelectorAll('.word');
+      const dropZones = document.querySelectorAll('.drop-zone');
+
+      words.forEach(word => {
+        word.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', e.target.dataset.wordId);
+          word.classList.add('opacity-50');
+        });
+
+        word.addEventListener('dragend', () => {
+          word.classList.remove('opacity-50', 'border-2', 'border-red-500');
+        });
+      });
+
+      dropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('bg-blue-100');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('bg-blue-100');
+        });
+
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('bg-blue-100');
+          
+          const wordId = e.dataTransfer.getData('text/plain');
+          const word = document.querySelector(`[data-word-id="${wordId}"]`);
+          const targetRhymingForId = zone.dataset.rhymingForId;
+          const wordRhymingForId = word.dataset.rhymingForId;
+
+          if (wordRhymingForId === targetRhymingForId) {
+            zone.querySelector('.word-list').appendChild(word);
+            word.classList.remove('border-2', 'border-red-500');
+          } else {
+            word.classList.add('border-2', 'border-red-500');
+          }
+        });
+      });
+    });
+  </script>
+  {% endblock %}

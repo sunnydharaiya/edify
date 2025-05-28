@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tricky Words
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+<section class="break-div"></section>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <div class="container mx-auto p-4">
+    <div class="row grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for word in tricky_words %}
+        <div class="col bg-gray-100 p-4 rounded-lg flex items-center justify-between">
+          <p class="text-lg font-medium">{{ word.word }}</p>
+          {% if word.audio %}
+            <button 
+              class="btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 play-audio"
+              data-audio-url="{{ word.audio.url }}"
+            >
+              <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-4.243-3.536v7.072m-4.243-10.607a9 9 0 0112.728 12.728 9 9 0 01-12.728-12.728z"></path>
+              </svg>
+            </button>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('.play-audio').click(function() {
+        var audioUrl = $(this).data('audio-url');
+        new Audio(audioUrl).play();
+      });
+    });
+  </script>
+{% endblock %}

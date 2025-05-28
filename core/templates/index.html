@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Home - My Application
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<section class="hero-section hero-2 fix">
+    <div class="circle-shape">
+        <img src="{% static 'img/hero/circle.png' %}" alt="shape-img">
+    </div>
+    <div class="line-shape">
+        <img src="{% static 'img/hero/line-shape.png' %}" alt="shape-img">
+    </div>
+    <div class="right-shape">
+        <img src="{% static 'img/hero/right-shape.png' %}" alt="shape-img">
+    </div>
+    <div class="roket-shape float-bob-y">
+        <img src="{% static 'img/hero/roket.png' %}" alt="shape-img">
+    </div>
+    <div class="compass-shape">
+        <img src="{% static 'img/hero/compass.png' %}" alt="shape-img">
+    </div>
+    <div class="bus-shape float-bob-x">
+        <img src="{% static 'img/hero/bus.png' %}" alt="shape-img">
+    </div>
+    <div class="frame-shape">
+        <img src="{% static 'img/hero/frame.png' %}" alt="shape-img">
+    </div>
+    <div class="star-shape">
+        <img src="{% static 'img/hero/star-2.png' %}" alt="shape-img">
+    </div>
+    <div class="pencil-shape">
+        <img src="{% static 'img/hero/pencil.png' %}" alt="">
+    </div>
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h5 class="wow fadeInUp">Preschool & Baby Care</h5>
+                    <h1 class="wow fadeInUp" data-wow-delay=".3s">
+                        We Prepare Your <br> Child For <span>Life</span>
+                    </h1>
+                    <p class="wow fadeInUp" data-wow-delay=".5s">Suspendisse eget lectus vitae elit malesuada lacinia Vestibulum <br> scelerisque, ligula sit amet consequat</p>
+                    <div class="hero-button">
+                        <a href="index-2.html" class="theme-btn wow fadeInUp" data-wow-delay=".7s">
+                            Explore More <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                        <a href="contact.html" class="theme-btn transparent wow fadeInUp" data-wow-delay=".8s">
+                            Get In Touch <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeInUp" data-wow-delay=".4s">
+                <div class="hero-image">
+                    <img src="{% static 'img/hero/02.png' %}" alt="hero-img">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

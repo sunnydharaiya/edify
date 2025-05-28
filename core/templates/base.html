@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/meanmenu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header class="header-section">
+        <div class="header-top-section">
+            <div class="container">
+                <div class="header-top-wrapper">
+                    <ul class="contact-list">
+                        <li>
+                            <i class="fal fa-map-marker-alt"></i>
+                           Vapi, Gujarat, India
+                        </li>
+                        <li>
+                            <i class="far fa-phone"></i>
+                            <a href="tel:8488083210" class="link">8488083210</a>
+                        </li>
+                    </ul>
+                    <div class="social-icon d-flex align-items-center">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="header-sticky">
+            <div class="container">
+                <div class="mega-menu-wrapper">
+                    <div class="header-main style-2">
+                        <div class="header-left">
+                            <div class="logo">
+                                <a href="{% url 'index' %}" class="header-logo">
+                                    <img src="{% static 'img/logo/logo.webp' %}" alt="logo-img">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="header-right d-flex justify-content-end align-items-center">
+                            <div class="mean__menu-wrapper">
+                                <div class="main-menu">
+                                    <nav id="mobile-menu">
+                                        <ul>
+                                            <li class="active menu-thumb">
+                                                <a href="{% url 'index' %}">
+                                                Home 
+                                            </li>
+                                            <li class="has-dropdown">
+                                                <a href="#">
+                                                    About us
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    <li>
+                                                        <a href="{% url 'about' %}">
+                                                           Founder
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{% url 'blog_list' %}">
+                                                           Blogs
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{% url 'about' %}">
+                                                           Contact Us
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+
+                                            <li class="has-dropdown">
+                                                <a href="#">
+                                                    Reading
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    {% for category in header_categories %}
+                                                    <li class="has-dropdown">
+                                                        <a href="#">
+                                                            {{ category.name }}
+                                                        <i class="fas fa-angle-down"></i>
+                                                        </a>
+                                                        <ul class="submenu">
+                                                            {% for reading in category.reading_set.all %}
+                                                            <li><a href="{% url 'reading_detail' slug=reading.slug %}">{{ reading.name }}</a></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Vocabulary
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    {% for category in categories %}
+                                                        <li class="has-dropdown">
+                                                        <a href="#" id="category{{ category.id }}">
+                                                            {{ category.name }}
+                                                        </a>
+                                                        <ul class="submenu">
+                                                            {% for activity in category.activities.all %}
+                                                            <li><a href="{% url 'generic_activity_detail' category.slug activity.title|slugify %}">{{ activity.title }}</a></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Grammar
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    {% for main_category in gcategories %}
+                                                    <li class="has-dropdown">
+                                                        <a href="#" id="category{{ main_category.id }}">{{ main_category.name }}</a>
+                                                        <ul class="submenu">
+                                                        {% for grammar_category in main_category.grammar_categories.all %}
+                                                            <li>
+                                                            <a href="{% url 'gramamr_activity_list' main_category.slug grammar_category.title|slugify %}">
+                                                                {{ grammar_category.title }}
+                                                            </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                    {% endfor %}
+
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Phonics
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    {% if user.is_authenticated and user.categories.all %}
+                                                      {% for category in user.categories.all %}
+                                                        {% if category.slug == "beginner" %}
+                                                          <li class="has-dropdown">
+                                                            <a href="#">Beginner <i class="fas fa-angle-down"></i></a>
+                                                            <ul class="submenu">
+                                                              <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
+                                                              <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'beginning' 'beginner' %}">Beginning Sound Activity</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'middle' 'beginner' %}">Middle Sound Activity</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'ending' 'beginner' %}">Ending Sound Activity</a></li>
+                                                              <li><a href="{% url 'blend_list' 'beginner' %}">Beginner Blends</a></li>
+                                                              <li><a href="{% url 'rhyming_list' 'beginner' %}">Rhyming Words</a></li>
+                                                              <li><a href="{% url 'english_alphabet_list' %}">English Alphabet</a></li>
+                                                              <li><a href="{% url 'tricky_word_list' 'beginner' %}">Tricky Words</a></li>
+                                                              {% for phase in phases %}
+                                                                <li><a href="{% url 'phase_view' phase.phase|lower %}" class="hover:underline">{{ phase.phase }} ({{ phase.category }})</a></li>
+                                                              {% endfor %}
+                                                            </ul>
+                                                          </li>
+                                                        {% elif category.slug == "intermediate" %}
+                                                          <li class="has-dropdown">
+                                                            <a href="#">Intermediate <i class="fas fa-angle-down"></i></a>
+                                                            <ul class="submenu">
+                                                              <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
+                                                              <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'beginning' 'intermediate' %}">Beginning Sound Activity</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'middle' 'intermediate' %}">Middle Sound Activity</a></li>
+                                                              <li><a href="{% url 'sound_activity_list' 'ending' 'intermediate' %}">Ending Sound Activity</a></li>
+                                                              <li><a href="{% url 'blend_list' 'intermediate' %}">Intermediate Blends</a></li>
+                                                              <li><a href="{% url 'rhyming_list' 'intermediate' %}">Rhyming Words</a></li>
+                                                              <li><a href="{% url 'tricky_word_list' 'intermediate' %}">Tricky Words</a></li>
+                                                              <li><a href="{% url 'read_listen_list' 'intermediate' %}">Read & Listen</a></li>
+                                                              <li><a href="{% url 'alternative_spelling_list' 'intermediate' %}">Alternative Spelling</a></li>
+                                                              <li><a href="{% url 'identify_words_list' 'intermediate' %}">Identify Words</a></li>
+                                                            </ul>
+                                                          </li>
+                                                        {% endif %}
+                                                      {% endfor %}
+                                                    {% endif %}
+                                                  </ul>
+                                                  
+                                                  {% if user.is_authenticated and user.categories.all %}
+                                                  {% for category in user.categories.all %}
+                                                    {% if category.slug == "activity" %}
+                                        
+                                            <li>
+                                                <a href="#">
+                                                    Activities
+                                                    <i class="fas fa-angle-down"></i>
+                                                </a>
+                                                <ul class="submenu">
+                                                    <li><a href="{% url 'spelling_drag_drop' %}">Alternaive spelling</a></li>
+                                                    <li><a href="{% url 'long_vowel_sound' %}">Long Vowel Sound</a></li>
+                                                    <li><a href="{% url 'unscramble_activity' %}">Unscramble Activity</a></li>
+                                                    <li class="has-dropdown">
+                                                        <a href="#">
+                                                            Expression & Object
+                                                        <i class="fas fa-angle-down"></i>
+                                                        </a>
+                                                        <ul class="submenu">
+                                                            {% for group in expression_groups %}
+                                                            <li><a href="{% url 'expression_group_detail' slug=group.slug %}">{{ group.name }}</a></li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="{% url 'vowel_word' %}">Vowel Word</a></li>
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% endif %}
+
+                                           
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="header-button">
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button class="theme-btn" type="submit">Logout
+        <i class="fa-solid fa-arrow-right-long"></i>
+     </button>
+  </form>
+{% else %}
+<a data-bs-toggle="modal" data-bs-target="#loginModal" class="theme-btn">
+  <span>
+    Login
+    <i class="fa-solid fa-arrow-right-long"></i>
+  </span>
+</a>
+{% endif %}
+
+                            </div>
+                            <div class="header__hamburger d-xl-none my-auto">
+                                <div class="sidebar__toggle">
+                                    <i class="fas fa-bars"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% include 'login_modal.html' %}        
+        {% block content %}
+        {% endblock %}
+
+        <footer class="footer-section section-bg">
+            <div class="frame-shape style-2">
+                <img src="{% static 'img/frame-2.png' %}" alt="shape-img">
+            </div>
+            <div class="frame-shape-3 float-bob-y">
+                <img src="{% static 'img/frame-3.png' %}" alt="shape-img">
+            </div>
+            <div class="footer-widgets-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 text-center col-md-6 wow fadeInUp" data-wow-delay=".3s">
+                            <div class="single-footer-widget">
+                                <div class="widget-head">
+                                    <a href="{% url 'index' %}">
+                                        <img src="{% static 'img/logo/logo.webp' %}" alt="logo-img">
+                                    </a>
+                                </div>
+                                <div class="footer-content text-center">
+                                    <div class="social-icon d-flex align-items-center justify-content-center">
+                                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="f-bottom-shape"></div>
+                <div class="container">
+                    <div class="footer-wrapper d-flex align-items-center justify-content-center">
+                        <p class="wow fadeInLeft color-2" data-wow-delay=".3s">
+                            © All Copyright 2024 by <a href="{% url 'index' %}">Edify Literacy</a>
+                        </p>
+                    </div>
+                </div>
+                <a href="#" id="scrollUp" class="scroll-icon">
+                    <i class="far fa-arrow-up"></i>
+                </a>
+            </div>
+        </footer>
+        <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+        <script src="{% static 'js/viewport.jquery.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'js/jquery.waypoints.js' %}"></script>
+        <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+        <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+        <script src="{% static 'js/jquery.meanmenu.min.js' %}"></script>
+        <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+        <script src="{% static 'js/wow.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

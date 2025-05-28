@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Unscramble Activity
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                {% for unscramble in unscramble_activities %}
+  {% for entry in unscramble.entries.all %}
+  <div class="drop-zone d-flex flex-wrap gap-2 mb-3"
+  data-answer="{{ entry.original_words|join:' ' }}"
+  ondragover="allowDrop(event)"
+  ondrop="dropWord(event)">
+</div>
+
+<div class="word-bank d-flex flex-wrap gap-2 mb-5">
+{% for word in entry.shuffled_words %}
+ <button class="btn btn-outline-primary btn-sm draggable-word"
+         draggable="true"
+         ondragstart="drag(event)"
+         id="word-{{ forloop.counter }}">
+   {{ word }}
+ </button>
+{% endfor %}
+</div>
+
+  {% endfor %}
+{% endfor %}
+
+                
+                  
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+    <script>
+let dragged = null;
+
+function drag(event) {
+    dragged = event.target;
+    setTimeout(() => event.target.classList.add('hide'), 0);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function dropWord(event) {
+    event.preventDefault();
+    if (!dragged) return;
+
+    // Drop before the hovered element (if applicable)
+    if (event.target.classList.contains('draggable-word')) {
+        event.target.parentNode.insertBefore(dragged, event.target);
+    } else {
+        // Otherwise just append to the container
+        event.currentTarget.appendChild(dragged);
+    }
+
+    dragged.classList.remove('hide');
+    checkCorrect(event.currentTarget);
+}
+
+function checkCorrect(zone) {
+    const expected = zone.dataset.answer.trim();
+    const actual = Array.from(zone.querySelectorAll('.draggable-word'))
+                        .map(btn => btn.innerText.trim()).join(' ');
+
+    const buttons = zone.querySelectorAll('.draggable-word');
+
+    if (actual === expected) {
+        zone.classList.add('correct');
+        buttons.forEach(btn => {
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-success');
+            btn.setAttribute('draggable', false);
+        });
+    } else {
+        zone.classList.remove('correct');
+        buttons.forEach(btn => {
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+            btn.setAttribute('draggable', true);
+        });
+    }
+}
+</script>
+
+<style>
+    .drop-zone {
+      min-height: 50px;
+      border: 2px dashed #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .drop-zone.correct {
+      border-color: green;
+    }
+    </style>
+    
+{% endblock %}

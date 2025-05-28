@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Blend List
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                              
+
+
+    {% for item in blend_data %}
+        <div class="col-md-12 mb-5">
+            <h3>{{ item.blend_for.name }}</h3>
+
+            <!-- Draggable Words and Target Boxes -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="words-container">
+                        {% for word in item.words|shuffle %}
+                            <div class="draggable-item" draggable="true" id="word-{{ word.id }}">
+                                <p>{{ word.word }}</p>
+                                {% if word.image %}
+                                    <img src="{{ word.image.url }}" alt="{{ word.word }}" width="100">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="drop-container">
+                        {% for word in item.words %}
+                            <div class="drop-box" data-id="{{ word.id }}">
+                                <button onclick="playAudio('{{ word.audio.url }}')" class="btn btn-primary btn-sm">
+                                    🔊 Play Sound
+                                </button>
+                                <span></span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+</section>      
+
+<script>
+    function playAudio(url) {
+        const audio = new Audio(url);
+        audio.play();
+    }
+
+    const draggableItems = document.querySelectorAll('.draggable-item');
+    const dropBoxes = document.querySelectorAll('.drop-box');
+
+    draggableItems.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        });
+    });
+
+    dropBoxes.forEach(box => {
+        box.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        box.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const draggedElement = document.getElementById(id);
+
+            if (box.dataset.id === id.split('-')[1]) {
+                box.querySelector('span').innerText = draggedElement.innerText;
+                box.classList.add('correct');
+            } else {
+                box.classList.add('incorrect');
+                setTimeout(() => {
+                    box.classList.remove('incorrect');
+                }, 1000);
+            }
+        });
+    });
+</script>
+
+<style>
+    .words-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .draggable-item {
+        cursor: grab;
+        border: 1px solid #ccc;
+        padding: 5px;
+        background-color: #f9f9f9;
+    }
+    .drop-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .drop-box {
+        width: 150px;
+        height: 50px;
+        border: 2px dashed #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .drop-box.correct {
+        border-color: green;
+    }
+    .drop-box.incorrect {
+        border-color: red;
+    }
+</style>
+
+{% endblock %}

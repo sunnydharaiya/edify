@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Unscramble Activity
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+  
+
+
+
+
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        <div class="program-details-wrapper">
+            <div class="row g-5">
+                <div class="col-lg-12">
+                    <div class="unscramble-container">
+                        {% for activity in unscramble_activities %}
+                            <div class="unscramble-item">
+                                {% if activity.image %}
+                                    <img src="{{ activity.image.url }}" alt="Image" class="unscramble-image">
+                                {% endif %}
+                                
+                                <p>{{ activity.sentence_part_1 }} <span class="blank-space">____</span> {{ activity.sentence_part_2 }}</p>
+                                
+                                <div class="scrambled-letters">
+                                    {% for letter in activity.scrambled_word %}
+                                        <button id="letter-{{ forloop.counter }}" class="letter-btn" draggable="true">{{ letter }}</button>
+                                    {% endfor %}
+                                </div>
+                    
+                                <div class="drop-area" ondrop="drop(event, '{{ activity.word }}')" ondragover="allowDrop(event)">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <script>
+                        function allowDrop(event) {
+                            event.preventDefault();
+                        }
+                    
+                        function drop(event, correctWord) {
+                            event.preventDefault();
+                            const dropArea = event.target;
+                            const data = event.dataTransfer.getData("text");
+                    
+                            const button = document.getElementById(data);
+                            if (button) {
+                                dropArea.appendChild(button);
+                            }
+                    
+                            // Check if the word matches
+                            const currentWord = Array.from(dropArea.children).map(btn => btn.textContent).join('');
+                            if (currentWord === correctWord) {
+                                dropArea.classList.add('correct');
+                            } else {
+                                dropArea.classList.remove('correct');
+                            }
+                        }
+                    
+                        document.querySelectorAll('.letter-btn').forEach((btn, index) => {
+                            btn.id = `letter-${index}`;
+                            btn.addEventListener('dragstart', event => {
+                                event.dataTransfer.setData("text", event.target.id);
+                            });
+                        });
+                    </script>
+                    
+                    <style>
+                        .unscramble-container {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 20px;
+                        }
+                        .unscramble-item {
+                            border: 1px solid #ccc;
+                            padding: 15px;
+                            border-radius: 8px;
+                            background-color: #f9f9f9;
+                        }
+                        .unscramble-image {
+                            width: 100px;
+                            height: auto;
+                            margin-bottom: 10px;
+                        }
+                        .scrambled-letters {
+                            display: flex;
+                            gap: 5px;
+                            margin-bottom: 10px;
+                        }
+                        .letter-btn {
+                            padding: 8px 12px;
+                            cursor: move;
+                            background-color: #eef;
+                            border: 1px solid #bbb;
+                            border-radius: 4px;
+                        }
+                        .drop-area {
+                            min-height: 40px;
+                            border: 2px dashed #ccc;
+                            padding: 10px;
+                            display: flex;
+                            gap: 5px;
+                        }
+                        .drop-area.correct {
+                            border-color: #4CAF50;
+                            background-color: #e8f5e9;
+                        }
+                    </style>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

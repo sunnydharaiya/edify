@@ -1,0 +1,132 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+
+{{ alternative_spelling.name }}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+
+  <style>
+    .answer-btn {
+      cursor: move;
+      user-select: none;
+    }
+    .drop-box {
+      min-height: 50px;
+      border: 2px dashed #6c757d;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+    }
+    .drop-box.correct {
+      border-color: #28a745;
+      background-color: #d4edda;
+    }
+    .drop-box.incorrect {
+      border-color: #dc3545;
+      background-color: #f8d7da;
+    }
+  </style>
+
+  <div class="container p-4">
+    <h1 class="display-4 fw-bold text-center mb-5">Alternative Spelling Activity - {{ alternative_spelling.name }}</h1>
+
+    <!-- Answer Buttons -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      {% for word in alternative_spelling_words %}
+        <button 
+          class="btn btn-outline-primary answer-btn" 
+          draggable="true" 
+          data-answer="{{ word.answer }}"
+          data-word-id="{{ word.id }}"
+        >
+          {{ word.answer }}
+        </button>
+      {% endfor %}
+    </div>
+
+    <!-- Sentences, Images, and Drop Boxes -->
+    <div class="row g-4">
+      {% for word in alternative_spelling_words %}
+        <div class="col-12">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <p class="mb-0">{{ word.sentence }}</p>
+            </div>
+            <div class="col-md-3">
+              {% if word.image %}
+                <img src="{{ word.image.url }}" alt="{{ word.answer }}" class="img-fluid rounded">
+              {% else %}
+                <p class="text-center text-muted">No image available</p>
+              {% endif %}
+            </div>
+            <div class="col-md-3">
+              <div 
+                class="drop-box" 
+                data-word-id="{{ word.id }}" 
+                data-correct-answer="{{ word.answer }}"
+              ></div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if not alternative_spelling_words %}
+      <p class="text-center text-muted mt-4">No words available for this activity.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      const answerButtons = $('.answer-btn');
+      const dropBoxes = $('.drop-box');
+
+      answerButtons.on('dragstart', function(e) {
+        e.originalEvent.dataTransfer.setData('text/plain', $(this).data('word-id'));
+        $(this).addClass('opacity-50');
+      });
+
+      answerButtons.on('dragend', function() {
+        $(this).removeClass('opacity-50');
+      });
+
+      dropBoxes.on('dragover', function(e) {
+        e.preventDefault();
+        $(this).addClass('bg-secondary-subtle');
+      });
+
+      dropBoxes.on('dragleave', function() {
+        $(this).removeClass('bg-secondary-subtle');
+      });
+
+      dropBoxes.on('drop', function(e) {
+        e.preventDefault();
+        $(this).removeClass('bg-secondary-subtle');
+        const wordId = e.originalEvent.dataTransfer.getData('text/plain');
+        const button = $(`.answer-btn[data-word-id="${wordId}"]`);
+        const correctAnswer = $(this).data('correct-answer');
+        const droppedAnswer = button.data('answer');
+
+        if (droppedAnswer === correctAnswer) {
+          $(this).text(droppedAnswer).addClass('correct').removeClass('incorrect');
+          button.hide();
+          const remainingButtons = $('.answer-btn:visible');
+          if (remainingButtons.length === 0) {
+            $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
+          }
+        } else {
+          $(this).addClass('incorrect');
+          setTimeout(() => $(this).removeClass('incorrect'), 1000);
+        }
+      });
+    });
+  </script>
+  {% endblock %}
