@@ -144,7 +144,6 @@
                                                         </ul>
                                                     </li>
                                                     {% endfor %}
-
                                                 </ul>
                                             </li>
                                             <li>
@@ -153,52 +152,40 @@
                                                     <i class="fas fa-angle-down"></i>
                                                 </a>
                                                 <ul class="submenu">
-                                                    {% if user.is_authenticated and user.categories.all %}
-                                                      {% for category in user.categories.all %}
-                                                        {% if category.slug == "beginner" %}
-                                                          <li class="has-dropdown">
-                                                            <a href="#">Beginner <i class="fas fa-angle-down"></i></a>
-                                                            <ul class="submenu">
-                                                              <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
-                                                              <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'beginning' 'beginner' %}">Beginning Sound Activity</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'middle' 'beginner' %}">Middle Sound Activity</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'ending' 'beginner' %}">Ending Sound Activity</a></li>
-                                                              <li><a href="{% url 'blend_list' 'beginner' %}">Beginner Blends</a></li>
-                                                              <li><a href="{% url 'rhyming_list' 'beginner' %}">Rhyming Words</a></li>
-                                                              <li><a href="{% url 'english_alphabet_list' %}">English Alphabet</a></li>
-                                                              <li><a href="{% url 'tricky_word_list' 'beginner' %}">Tricky Words</a></li>
-                                                              {% for phase in phases %}
-                                                                <li><a href="{% url 'phase_view' phase.phase|lower %}" class="hover:underline">{{ phase.phase }} ({{ phase.category }})</a></li>
-                                                              {% endfor %}
-                                                            </ul>
-                                                          </li>
-                                                        {% elif category.slug == "intermediate" %}
-                                                          <li class="has-dropdown">
-                                                            <a href="#">Intermediate <i class="fas fa-angle-down"></i></a>
-                                                            <ul class="submenu">
-                                                              <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
-                                                              <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'beginning' 'intermediate' %}">Beginning Sound Activity</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'middle' 'intermediate' %}">Middle Sound Activity</a></li>
-                                                              <li><a href="{% url 'sound_activity_list' 'ending' 'intermediate' %}">Ending Sound Activity</a></li>
-                                                              <li><a href="{% url 'blend_list' 'intermediate' %}">Intermediate Blends</a></li>
-                                                              <li><a href="{% url 'rhyming_list' 'intermediate' %}">Rhyming Words</a></li>
-                                                              <li><a href="{% url 'tricky_word_list' 'intermediate' %}">Tricky Words</a></li>
-                                                              <li><a href="{% url 'read_listen_list' 'intermediate' %}">Read & Listen</a></li>
-                                                              <li><a href="{% url 'alternative_spelling_list' 'intermediate' %}">Alternative Spelling</a></li>
-                                                              <li><a href="{% url 'identify_words_list' 'intermediate' %}">Identify Words</a></li>
-                                                            </ul>
-                                                          </li>
-                                                        {% endif %}
-                                                      {% endfor %}
-                                                    {% endif %}
-                                                  </ul>
-                                                  
-                                                  {% if user.is_authenticated and user.categories.all %}
-                                                  {% for category in user.categories.all %}
-                                                    {% if category.slug == "activity" %}
-                                        
+                                                    <li class="has-dropdown">
+                                                    <a href="#">Beginner <i class="fas fa-angle-down"></i></a>
+                                                    <ul class="submenu">
+                                                        <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
+                                                        <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'beginning' 'beginner' %}">Beginning Sound Activity</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'middle' 'beginner' %}">Middle Sound Activity</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'ending' 'beginner' %}">Ending Sound Activity</a></li>
+                                                        <li><a href="{% url 'blend_list' 'beginner' %}">Beginner Blends</a></li>
+                                                        <li><a href="{% url 'rhyming_list' 'beginner' %}">Rhyming Words</a></li>
+                                                        <li><a href="{% url 'english_alphabet_list' %}">English Alphabet</a></li>
+                                                        <li><a href="{% url 'tricky_word_list' 'beginner' %}">Tricky Words</a></li>
+                                                        {% for phase in phases %}
+                                                        <li><a href="{% url 'phase_view' phase.phase|lower %}" class="hover:underline">{{ phase.phase }} ({{ phase.category }})</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    </li>
+                                                    <li class="has-dropdown">
+                                                    <a href="#">Intermediate <i class="fas fa-angle-down"></i></a>
+                                                    <ul class="submenu">
+                                                        <li><a href="{% url 'vowel_word_list' 'short' %}">Short Vowel</a></li>
+                                                        <li><a href="{% url 'vowel_word_list' 'long' %}">Long Vowel</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'beginning' 'intermediate' %}">Beginning Sound Activity</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'middle' 'intermediate' %}">Middle Sound Activity</a></li>
+                                                        <li><a href="{% url 'sound_activity_list' 'ending' 'intermediate' %}">Ending Sound Activity</a></li>
+                                                        <li><a href="{% url 'blend_list' 'intermediate' %}">Intermediate Blends</a></li>
+                                                        <li><a href="{% url 'rhyming_list' 'intermediate' %}">Rhyming Words</a></li>
+                                                        <li><a href="{% url 'tricky_word_list' 'intermediate' %}">Tricky Words</a></li>
+                                                        <li><a href="{% url 'read_listen_list' 'intermediate' %}">Read & Listen</a></li>
+                                                        <li><a href="{% url 'alternative_spelling_list' 'intermediate' %}">Alternative Spelling</a></li>
+                                                        <li><a href="{% url 'identify_words_list' 'intermediate' %}">Identify Words</a></li>
+                                                    </ul>
+                                                    </li>
+                                                </ul>
                                             <li>
                                                 <a href="#">
                                                     Activities
@@ -222,11 +209,6 @@
                                                     <li><a href="{% url 'vowel_word' %}">Vowel Word</a></li>
                                                 </ul>
                                             </li>
-                                            {% endif %}
-                                            {% endfor %}
-                                            {% endif %}
-
-                                           
                                         </ul>
                                     </nav>
                                 </div>

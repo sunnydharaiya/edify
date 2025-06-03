@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ title }}
+{{ activity.name }}
 {% endblock %}
 
 {% block content %}
@@ -10,8 +10,8 @@
 
 
 <section class="break-div"></section>
-
-
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+<div class="container">
 <h3>{{ activity.name }}</h3>
 <div class="row">
   <div class="col-md-12 mb-3">
@@ -34,7 +34,7 @@
     </div>
   {% endfor %}
 </div>
-
+</div>
 <style>
   .word-list {
     margin-bottom: 20px;

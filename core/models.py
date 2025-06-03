@@ -25,19 +25,10 @@ class Blog(models.Model):
     def __str__(self):
         return self.title
 
+
 class User(AbstractUser):
-    categories = models.ManyToManyField(Category, blank=True, related_name='users')
-    groups = models.ManyToManyField(
-        Group,
-        related_name='custom_user_set',
+    categories = models.ManyToManyField(
+        Category,
         blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups'
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='custom_user_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions'
+        related_name='users'
     )

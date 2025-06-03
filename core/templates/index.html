@@ -6,56 +6,199 @@
 
 {% block content %}
 {% load static %}
-<section class="hero-section hero-2 fix">
-    <div class="circle-shape">
-        <img src="{% static 'img/hero/circle.png' %}" alt="shape-img">
-    </div>
-    <div class="line-shape">
-        <img src="{% static 'img/hero/line-shape.png' %}" alt="shape-img">
-    </div>
-    <div class="right-shape">
-        <img src="{% static 'img/hero/right-shape.png' %}" alt="shape-img">
-    </div>
-    <div class="roket-shape float-bob-y">
-        <img src="{% static 'img/hero/roket.png' %}" alt="shape-img">
-    </div>
-    <div class="compass-shape">
-        <img src="{% static 'img/hero/compass.png' %}" alt="shape-img">
-    </div>
-    <div class="bus-shape float-bob-x">
-        <img src="{% static 'img/hero/bus.png' %}" alt="shape-img">
-    </div>
-    <div class="frame-shape">
-        <img src="{% static 'img/hero/frame.png' %}" alt="shape-img">
-    </div>
-    <div class="star-shape">
-        <img src="{% static 'img/hero/star-2.png' %}" alt="shape-img">
-    </div>
-    <div class="pencil-shape">
-        <img src="{% static 'img/hero/pencil.png' %}" alt="">
-    </div>
-    <div class="container">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-                <div class="hero-content">
-                    <h5 class="wow fadeInUp">Preschool & Baby Care</h5>
-                    <h1 class="wow fadeInUp" data-wow-delay=".3s">
-                        We Prepare Your <br> Child For <span>Life</span>
-                    </h1>
-                    <p class="wow fadeInUp" data-wow-delay=".5s">Suspendisse eget lectus vitae elit malesuada lacinia Vestibulum <br> scelerisque, ligula sit amet consequat</p>
-                    <div class="hero-button">
-                        <a href="index-2.html" class="theme-btn wow fadeInUp" data-wow-delay=".7s">
-                            Explore More <i class="fa-solid fa-arrow-right-long"></i>
-                        </a>
-                        <a href="contact.html" class="theme-btn transparent wow fadeInUp" data-wow-delay=".8s">
-                            Get In Touch <i class="fa-solid fa-arrow-right-long"></i>
-                        </a>
+<section class="hero-section hero-3">
+    <div class="swiper hero-slider">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="slider-image bg-cover" style="background-image: url('{% static 'img/hero/slider-1.png' %}');">
+                    <div class="parasuit-shape" data-animation="fadeInLeft" data-delay="2.1s">
+                        <img src="{% static 'img/hero/parasuit.png' %}" alt="shape-img">
+                    </div>
+                    <div class="doll-shape" data-animation="fadeInLeft" data-delay="2.3s">
+                        <img src="{% static 'img/hero/doll.png' %}" alt="shape-img">
+                    </div>
+                    <div class="bus-shape" data-animation="fadeInLeft" data-delay="2.4s">
+                        <img src="{% static 'img/hero/bus.png' %}" alt="shape-img">
+                    </div>
+                    <div class="bee-shape" data-animation="fadeInUp" data-delay="2.5s">
+                        <img src="{% static 'img/hero/bee-2.png' %}" alt="shape-img">
+                    </div>
+                    <div class="star-shape" data-animation="fadeInUp" data-delay="2.4s">
+                        <img src="{% static 'img/hero/star-2.png' %}" alt="shape-img">
+                    </div>
+                    <div class="container">
+                        <div class="row g-4 align-items-center">
+                            <div class="col-lg-8">
+                                <div class="hero-content">
+                                    <h5  data-animation="fadeInUp" data-delay="1.3s">Welcome to Edify Literacy</h5>
+                                    <h1 data-animation="fadeInUp" data-delay="1.5s">
+                                        Phonics Revolution: <br> <span>Empowering Young Readers</span>
+                                    </h1>
+                                    <p data-animation="fadeInUp" data-delay="1.7s">
+                                        Welcome to the world of phonics classes! Here, we unlock the power of sounds and letters, building strong reading and language skills. Through interactive activities and games, children will master phonics principles for effortless reading. Join us on this exciting journey to a lifetime of successful communication. Let's get started!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 wow fadeInUp" data-wow-delay=".4s">
-                <div class="hero-image">
-                    <img src="{% static 'img/hero/02.png' %}" alt="hero-img">
+            <div class="swiper-slide">
+                <div class="slider-image bg-cover" style="background-image: url('{% static 'img/hero/slider-2.png' %}');">
+                    <div class="parasuit-shape" data-animation="fadeInLeft" data-delay="2.1s">
+                        <img src="{% static 'img/hero/parasuit.png' %}" alt="shape-img">
+                    </div>
+                    <div class="doll-shape" data-animation="fadeInLeft" data-delay="2.3s">
+                        <img src="{% static 'img/hero/doll.png' %}" alt="shape-img">
+                    </div>
+                    <div class="bus-shape" data-animation="fadeInLeft" data-delay="2.4s">
+                        <img src="{% static 'img/hero/bus.png' %}" alt="shape-img">
+                    </div>
+                    <div class="bee-shape" data-animation="fadeInUp" data-delay="2.5s">
+                        <img src="{% static 'img/hero/bee-2.png' %}" alt="shape-img">
+                    </div>
+                    <div class="star-shape" data-animation="fadeInUp" data-delay="2.4s">
+                        <img src="{% static 'img/hero/star-2.png' %}" alt="shape-img">
+                    </div>
+                    <div class="container">
+                        <div class="row g-4 align-items-center">
+                            <div class="col-lg-8">
+                                <div class="hero-content">
+                                    <h5  data-animation="fadeInUp" data-delay="1.3s">Welcome to Edify Literacy</h5>
+                                    <h1 data-animation="fadeInUp" data-delay="1.5s">
+                                        Building Strong Foundations <br> <span>A Journey into Grammar Skills</span>
+                                    </h1>
+                                    <p data-animation="fadeInUp" data-delay="1.7s">
+                                        Welcome to the exciting world of grammar tailored specifically for young minds! This syllabus is designed for kids aged 5 to 14 years, providing a fun and interactive learning experience. We will embark on a journey through the rules and structures of grammar, helping children develop a strong foundation in language skills. From basic parts of speech to sentence construction and punctuation, we'll explore concepts in an engaging and age-appropriate manner. Let's dive in and empower young learners with the tools they need to become confident communicators.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-dot text-center pt-5">
+            <div class="dot"></div>
+        </div>
+    </div>
+</section>
+
+<section class="service-section fix section-padding">
+    <div class="line-1">
+        <img src="assets/img/line-1.png" alt="shape-img">
+    </div>
+    <div class="line-2">
+        <img src="assets/img/line-3.png" alt="shape-img">
+    </div>
+    <div class="container">
+        <div class="service-wrapper">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="service-left">
+                        <div class="section-title">
+                            <h2 class="wow fadeInUp" data-wow-delay=".3s">
+                                Empowering Young Minds
+                            </h2>
+                        </div>
+                        <p class="mt-3 mt-md-0 wow fadeInUp" data-wow-delay=".5s">
+                            Remember, the journey of phonics is not just about teaching children to read; it's about empowering them to communicate effectively, comprehend the world around them, and develop a lifelong love for learning. With your guidance and support, children can indeed reach their full potential as confident, articulate, and successful individuals.
+                        </p>
+                        <div class="about-author wow fadeInUp" data-wow-delay=".3s">
+                            <div class="author-icon wow fadeInUp" data-wow-delay=".5s">
+                                <div class="icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div class="content">
+                                    <span>Call Us Now</span>
+                                    <h5>
+                                        <a href="tel:8488083210">+91 8488083210</a>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="service-right">
+                        <div class="icon-items wow fadeInUp" data-wow-delay=".3s">
+                            <div class="icon">
+                                <i class="icon-icon-2"></i>
+                            </div>
+                            <div class="content">
+                                <h5>Phonics</h5>
+                                <p>Unlock the joy of reading with phonics! Our engaging approach helps children master sound-letter connections, building a strong foundation for confident communication and lifelong learning.</p>
+                            </div>
+                        </div>
+                        <div class="icon-items style-2 wow fadeInUp" data-wow-delay=".5s">
+                            <div class="icon color-2">
+                                <i class="icon-icon-15"></i>
+                            </div>
+                            <div class="content">
+                                <h5>Grammar</h5>
+                                <p>Empower young minds with grammar skills that bring clarity to their thoughts. Our interactive lessons make learning the rules of language fun, fostering articulate and confident expression.</p>
+                            </div>
+                        </div>
+                        <div class="icon-items wow fadeInUp" data-wow-delay=".7s">
+                            <div class="icon color-3">
+                                <i class="icon-icon-24"></i>
+                            </div>
+                            <div class="content">
+                                <h5>Vocabulary</h5>
+                                <p>Expand horizons through the power of words! Our vocabulary programs inspire curiosity, enhance comprehension, and equip children to express themselves with confidence and creativity.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonial-section fix section-padding">
+    <div class="love-shape">
+        <img src="assets/img/team/love.png" alt="shape-img">
+    </div>
+    <div class="right-shape">
+        <img src="assets/img/testi-r-shape.png" alt="shape-img">
+    </div>
+    <div class="bee-shape float-bob-y">
+        <img src="assets/img/testi-bee-shape.png" alt="shape-img">
+    </div>
+    <div class="container">
+        <div class="section-title text-center">
+            <span class="wow fadeInUp">testimonials</span>
+            <h2 class="wow fadeInUp" data-wow-delay=".3s">Parents' words are the key <br> to happy kids</h2>
+        </div>
+        <div class="swiper testimonial-slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="testimonial-items">
+                        <div class="icon">
+                            <img src="assets/img/quote.png" alt="img">
+                        </div>
+                        <div class="testimonial-bg"></div>
+                        <div class="testimonial-content">
+                            <p>Edify Literacy for Phonics provides a creative edge in teaching children to learn and improve their skills. My  kid enjoys learning sounds, and He has even started reading at home using the learning method.</p>
+                            <h6>Parth Patel</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonial-items">
+                        <div class="icon">
+                            <img src="assets/img/quote.png" alt="img">
+                        </div>
+                        <div class="testimonial-bg"></div>
+                        <div class="testimonial-content">
+                            <p>
+                                I strongly recommend Edify Literacy! <br>
+                                        They have a fantastic phonics and grammar teacher who is very passionate about teaching. The teacher pays attention to each student. Edify Literacy is a great place to learn and they inspire everyone!</p>
+                               
+                            </p>
+                            <h6>Rajiv Joshi</h6>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

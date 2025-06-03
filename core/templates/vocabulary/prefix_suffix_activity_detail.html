@@ -10,76 +10,102 @@ Prefix suffix
 
 
 <section class="break-div"></section>
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
 
+<div class="container my-4">
+  {% for activity in prefix_suffix_activities %}
+    <div class="mb-5">
+      <h2 class="h4 mb-4">{{ activity.title }} <span class="text-muted">({{ activity.get_type_display }})</span></h2>
+      <div class="row gy-3">
+        {% for word in activity.words.all %}
+          <div class="col-md-6">
+            <div class="p-3 border rounded">
+              {% if activity.type == 'prefix' %}
+                <div class="d-flex align-items-center justify-content-between">
+                  <select class="form-control option-select me-3"
+                          data-correct="{{ word.correct_option_id }}"
+                          data-fullword="{{ word.word }}">
+                    <option value="">Select option</option>
+                    {% for option in word.options.all %}
+                      <option value="{{ option.id }}">{{ option.option_text }}</option>
+                    {% endfor %}
+                  </select>
+                  <strong>{{ word.word_text }}</strong>
+                </div>
+              {% elif activity.type == 'suffix' %}
+                <div class="d-flex align-items-center justify-content-between">
+                  <strong class="me-3">{{ word.word_text }}</strong>
+                  <select class="form-control option-select"
+                          data-correct="{{ word.correct_option_id }}"
+                          data-fullword="{{ word.word }}">
+                    <option value="">Select option</option>
+                    {% for option in word.options.all %}
+                      <option value="{{ option.id }}">{{ option.option_text }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {% else %}
+                <div class="d-flex align-items-center justify-content-between">
+                  <strong class="me-3">{{ word.word_text }}</strong>
+                  <select class="form-control option-select"
+                          data-correct="{{ word.correct_option_id }}"
+                          data-fullword="{{ word.word }}">
+                    <option value="">Select option</option>
+                    {% for option in word.options.all %}
+                      <option value="{{ option.id }}">{{ option.option_text }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endif %}
+              <div class="feedback mt-2 fw-semibold"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
 
-{% for activity in prefix_suffix_activities %}
-  <h2>{{ activity.title }} ({{ activity.get_type_display }})</h2>
-  <ul>
-    {% for word in activity.words.all %}
-      <li data-word-id="{{ word.id }}">
-        {% if activity.type == 'prefix' %}
-          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
-            <option value="">Select option</option>
-            {% for option in word.options.all %}
-              <option value="{{ option.id }}">{{ option.option_text }}</option>
-            {% endfor %}
-          </select>
-          <strong>{{ word.word_text }}</strong>
+</section>
 
-        {% elif activity.type == 'suffix' %}
-          <strong>{{ word.word_text }}</strong>
-          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
-            <option value="">Select option</option>
-            {% for option in word.options.all %}
-              <option value="{{ option.id }}">{{ option.option_text }}</option>
-            {% endfor %}
-          </select>
-
-        {% else %}
-          <strong>{{ word.word_text }}</strong>
-          <select class="option-select" data-correct="{{ word.correct_option_id }}" data-fullword="{{ word.word }}">
-            <option value="">Select option</option>
-            {% for option in word.options.all %}
-              <option value="{{ option.id }}">{{ option.option_text }}</option>
-            {% endfor %}
-          </select>
-        {% endif %}
-        <span class="feedback"></span>
-      </li>
-    {% endfor %}
-  </ul>
-{% endfor %}
-
-
+ <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 <script>
-    document.querySelectorAll('.option-select').forEach(select => {
-      select.addEventListener('change', function () {
-        const selectedOptionId = this.value;
-        const correctOptionId = this.dataset.correct;
-        const fullWord = this.dataset.fullword;
-        const feedbackSpan = this.closest('li').querySelector('.feedback');
-    
-        // Reset previous feedback
-        this.classList.remove('wrong');
-        feedbackSpan.textContent = '';
-        feedbackSpan.className = 'feedback';
-    
-        if (selectedOptionId === correctOptionId) {
-          feedbackSpan.textContent = fullWord;
-          feedbackSpan.classList.add('correct-word');
-        } else {
-          this.classList.add('wrong');
-        }
-      });
+  $(document).ready(function () {
+    $('.option-select').on('change', function () {
+      const correct = $(this).data('correct').toString();
+      const selected = $(this).val();
+      const feedback = $(this).closest('.p-3').find('.feedback');
+
+      if (selected === correct) {
+        feedback.html('✔️ <span class="text-success">Correct!</span>');
+        $(this).addClass('is-valid');
+        $(this).removeClass('is-invalid');
+      } else {
+        feedback.html('❌ <span class="text-danger">Try again.</span>');
+        $(this).addClass('is-invalid');
+        $(this).removeClass('is-valid');
+      }
+
+      $(this).prop('disabled', true);
     });
-    </script>
-    <style>
-        .wrong {
-            border: 2px solid red;
-        }
-        .correct-word {
-            font-weight: bold;
-            color: green;
-        }
-    </style>
+  });
+</script>
+<style>
+  .nice-select {
+    border: 1px solid #000;    padding-left: 20px;
+}
+.nice-select::after {
+    right: 15px;
+}
+  .is-valid {
+    border-color: #198754 !important;
+    background-color: #e9fbe5;
+  }
+
+  .is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fbeaea;
+  }
+</style>
+
     {% endblock %}

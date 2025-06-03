@@ -28,6 +28,7 @@
             text-align: center;
             font-size: 1.5em;
             border: 1px solid black;
+            color: #000;
         }
         .square .num {
             position: absolute;
@@ -37,7 +38,9 @@
             font-weight: bold;
         }
     </style>
-    {% for row in crossword_data %}
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+        {% for row in crossword_data %}
         <div class="row">
             {% for cell in row %}
                 <div class="square">
@@ -72,7 +75,8 @@
             {% endfor %}    
         </div>
     </div>
-
+    </div>
+</section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.char');

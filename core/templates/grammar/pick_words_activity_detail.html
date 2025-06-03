@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ title }}
+{{ activity.title }}
 {% endblock %}
 
 {% block content %}
@@ -11,22 +11,41 @@
 
 <section class="break-div"></section>
 
-
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
 {% load custom_filters %}
-<h3>{{ activity.title }}</h3>
+<div class="container">
+    <div class="row">
+<div class="col-md-12 text-center mb-5">
+        <h3>{{ activity.title }}</h3>
+</div>
 <div class="col-md-12 mb-3">
     {% for sentence in sentences %}
         <div class="sentence">
             <p>
-                {% for word in sentence.sentence|split:" " %}
-                    {% with matched_word=sentence.words.all|filter_word:word %}
-                        <button class="btn btn-primary word" data-word="{{ word }}" data-correct="{% if matched_word %}true{% else %}false{% endif %}">{{ word }}</button>
-                    {% endwith %}
-                {% endfor %}
+                {% with correct_count=sentence.words.all|length %}
+  {% if correct_count > 1 %}
+    <p class="fw-bold text-danger">More than one answer</p>
+  {% endif %}
+{% endwith %}
+
+{% for word in sentence.sentence|split:" " %}
+  {% with matched_word=sentence.words.all|filter_word:word %}
+    <button class="btn btn-primary word my-1 me-1"
+            data-word="{{ word }}"
+            data-correct="{% if matched_word %}true{% else %}false{% endif %}">
+      {{ word }}
+    </button>
+  {% endwith %}
+{% endfor %}
+
             </p>
         </div>
     {% endfor %}
 </div>
+    </div>
+</div>
+</section>
+
 
 <style>
     .sentence {

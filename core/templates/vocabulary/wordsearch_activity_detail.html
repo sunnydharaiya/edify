@@ -33,6 +33,10 @@
             background-color: transparent;
             color: #000;
         }
+        .btn:hover {
+            cursor: pointer;
+            border: 2px solid;
+        }
         .square .num {
             position: absolute;
             top: 2px;
@@ -52,6 +56,7 @@
         .btn-danger { background-color: red!important;color: #fff!important; }
     </style>
 
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
@@ -81,7 +86,7 @@
             </div>
         </div>
     </div>
-
+</section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const buttons = document.querySelectorAll('.char');

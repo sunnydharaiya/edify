@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ title }}
+{{ category.title }}
 {% endblock %}
 
 {% block content %}
@@ -10,37 +10,40 @@
 
 
 <section class="break-div"></section>
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+  <div class="container my-4">
+    <h1 class="display-4 fw-bold text-center mb-5">{{ category.title }} Activities</h1>
 
-<h2>Activities under {{ category.title }}</h2>
+    {% if activities or draganddrop or pick %}
+      <div class="list-group">
+        {% for activity in activities %}
+          <a href="{% url 'grammar_activity_detail' category.slug activity.name|slugify %}"
+             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-book me-2"></i>{{ activity.name }}</span>
+            <span class="badge bg-primary">Grammar</span>
+          </a>
+        {% endfor %}
 
-<ul>
-  {% for activity in activities %}
-  <li>
-    <a href="{% url 'grammar_activity_detail' category.slug activity.name|slugify %}">
-      {{ activity.name }}
-    </a>
-  </li>
-  
-  {% empty %}
-    <li>No activities found under this category.</li>
-  {% endfor %}
+        {% for drag in draganddrop %}
+          <a href="{% url 'dragdrop_activity_detail' drag.slug %}"
+             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-hand-index-thumb me-2"></i>{{ drag.name }}</span>
+            <span class="badge bg-success">Drag & Drop</span>
+          </a>
+        {% endfor %}
 
-  {% for drag in draganddrop %}
-  <li>
-    <a href="{% url 'dragdrop_activity_detail' drag.slug %}">
-      {{ drag.name }}
-    </a>
-  </li>
-{% endfor %}
+        {% for pk in pick %}
+          <a href="{% url 'pick_words_activity_detail' category.slug pk.title|slugify %}"
+             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-check2-square me-2"></i>{{ pk.title }}</span>
+            <span class="badge bg-warning text-dark">Pick Words</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted text-center">No activities found under this category.</p>
+    {% endif %}
+  </div>
+</section>
 
-  {% for pk in pick %}
-  <li>
-    <a href="{% url 'pick_words_activity_detail' category.slug pk.title|slugify %}">
-      {{ pk.title }}
-  </a>
-  </li>
-{% endfor %}
-
-
-</ul>
 {% endblock %}

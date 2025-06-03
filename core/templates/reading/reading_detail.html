@@ -45,7 +45,7 @@
                     <h5>True/False Activities</h5>
                     <ul class="mt-3">
                         {% for activity in true_false_activities %}
-                            <li id="activity-{{ forloop.counter }}" class="mb-4">
+                            <li id="activity-{{ forloop.counter }}" class="mb-4 activity-card">
                                 <p>{{ activity.statement }}</p>
                                 <button 
                                     onclick="checkAnswer('{{ activity.is_true }}', true, 'activity-{{ forloop.counter }}', this)" 
@@ -202,7 +202,28 @@
 </section>
 
 
-<style>.bg-success {
+<style>
+    .activity-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.activity-card.bg-success,
+.activity-card.bg-danger {
+    color: #fff;
+}
+
+.activity-card p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+
+.bg-success {
     background-color: #d4edda !important;
     color: #155724;
     border-radius: 5px;
