@@ -11,9 +11,16 @@ def vowel_word_list(request, type):
     vowels = Vowel.objects.filter(type=type).prefetch_related('vowel_words')
     vowel_word_list = VowelWord.objects.filter(vowel__type=type)
     
+    grouped_words = {}
+    for vowel_code, vowel_label in VowelsAlphabet.VOWEL_CHOICES:
+        words = VowelsAlphabet.objects.filter(main_type=type, vowel=vowel_code).values_list('word', flat=True)
+        if words:
+            grouped_words[vowel_label] = list(words)
+
 
     return render(request, 'phonics/vowel_word_list.html', {
         'vowels': vowels,
+        'grouped_words': grouped_words,
         'type': type,
         'vowel_word_list': vowel_word_list,
     })
@@ -49,6 +56,7 @@ def sound_activity_list(request, position, level):
             'activity': activity,
             'hidden_letter': hidden_letter,
             'options': options,
+            'image': activity.image,
         })
 
     return render(request, 'phonics/sound_activity_list.html', {

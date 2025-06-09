@@ -6,10 +6,7 @@ from vocabulary.models import GenericActivity
 from grammar.models import GrammarCategory
 
 def categories_processor(request):
-    if request.user.is_authenticated:
-        categories = request.user.categories.filter(reading__isnull=False).distinct().prefetch_related('reading_set')
-    else:
-        categories = Category.objects.filter(reading__isnull=False).distinct().prefetch_related('reading_set')
+    categories = Category.objects.filter(reading__isnull=False).distinct().prefetch_related('reading_set')
     return {
         'header_categories': categories
     }
@@ -26,15 +23,9 @@ def phases(request):
         'phases': phases
     }
 def activities(request):
-    if request.user.is_authenticated:
-        categories = request.user.categories.filter(activities__isnull=False).distinct().prefetch_related('activities')
-    else:
-        categories = Category.objects.filter(activities__isnull=False).distinct().prefetch_related('activities')
+    categories = Category.objects.filter(activities__isnull=False).distinct().prefetch_related('activities')
     return {'categories': categories}
 
 def grammar_categories(request):
-    if request.user.is_authenticated:
-        categories = request.user.categories.filter(grammar_categories__isnull=False).distinct().prefetch_related('grammar_categories')
-    else:
-        categories = Category.objects.filter(grammar_categories__isnull=False).distinct().prefetch_related('grammar_categories')
+    categories = Category.objects.filter(grammar_categories__isnull=False).distinct().prefetch_related('grammar_categories')
     return {'gcategories': categories}

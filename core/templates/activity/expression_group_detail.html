@@ -7,78 +7,102 @@
 {% block content %}
 {% load static %}
 {% load custom_filters %}
-  
 
+<style>
+  .program-details-section {
+    margin-top: 100px; /* reduced margin-top for better UX */
+  }
+  .expression-col {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  .expression-col img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    object-fit: cover;
+  }
+  .expression-col.correct-answer {
+    border-color: #4CAF50 !important;
+    background-color: #e8f5e9;
+  }
+  .expression-col.incorrect-answer {
+    border-color: #F44336 !important;
+    background-color: #ffebee;
+  }
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .btn-group .btn {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1.5px solid #007bff;
+    background-color: #fff;
+    color: #007bff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    user-select: none;
+  }
+  .btn-group .btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .g-4{
+    gap:25px
+  }
+</style>
 
-
-
-<section class="program-details-section fix section-padding" style="margin-top: 300px;">
-    <div class="container">
-        <div class="program-details-wrapper">
-            <div class="row g-5">
-                {% for expression_object in expression_group.expression_objects.all %}
-                <div class="col-md-4 expression-col" id="exp-col-{{ expression_object.id }}">
-                    {% if expression_object.image %}
-                        <img src="{{ expression_object.image.url }}" alt="Expression Image" class="img-fluid mb-2">
-                    {% endif %}
-                    
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        {% for option in expression_object.options.all %}
-                            <button class="btn btn-outline-primary option-btn" 
-                                    data-correct="{{ option.is_correct }}" 
-                                    data-col="exp-col-{{ expression_object.id }}" 
-                                    onclick="checkAnswer(this)">
-                                {{ option.option_text }}
-                            </button>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-                    <script>
-                        function checkAnswer(button) {
-                            const isCorrect = button.getAttribute('data-correct') === 'True';
-                            const colId = button.getAttribute('data-col');
-                            const colElement = document.getElementById(colId);
-                    
-                            if (isCorrect) {
-                                colElement.classList.add('correct-answer');
-                                colElement.classList.remove('incorrect-answer');
-                            } else {
-                                colElement.classList.add('incorrect-answer');
-                                colElement.classList.remove('correct-answer');
-                            }
-                        }
-                    </script>
-                    
-                    <style>
-                        .expression-col {
-                            border: 2px solid #ccc;
-                            border-radius: 8px;
-                            padding: 15px;
-                            margin-bottom: 20px;
-                            transition: border-color 0.3s ease;
-                        }
-                        .expression-col img {
-                            width: 100%;
-                            height: auto;
-                            border-radius: 4px;
-                        }
-                        .expression-col.correct-answer {
-                            border-color: #4CAF50 !important;
-                            background-color: #e8f5e9;
-                        }
-                        .expression-col.incorrect-answer {
-                            border-color: #F44336 !important;
-                            background-color: #ffebee;
-                        }
-                        .btn-group .btn {
-                            margin-bottom: 5px;
-                        }
-                    </style>
-                </div>
-        </div>
+<section class="program-details-section fix section-padding">
+  <div class="container">
+    <div class="program-details-wrapper">
+      <div class="row g-4">
+        {% for expression_object in expression_group.expression_objects.all %}
+          <div class="col-md-4 expression-col" id="exp-col-{{ expression_object.id }}">
+            {% if expression_object.image %}
+              <img src="{{ expression_object.image.url }}" alt="Expression Image" class="img-fluid">
+            {% endif %}
+            <div class="btn-group" role="group" aria-label="Options for expression {{ forloop.counter }}">
+              {% for option in expression_object.options.all %}
+                <button
+                  type="button"
+                  class="btn option-btn"
+                  data-correct="{{ option.is_correct }}"
+                  data-col="exp-col-{{ expression_object.id }}"
+                  onclick="checkAnswer(this)"
+                >
+                  {{ option.option_text }}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     </div>
+  </div>
 </section>
 
+<script>
+  function checkAnswer(button) {
+    const isCorrect = button.getAttribute('data-correct') === 'True';
+    const colId = button.getAttribute('data-col');
+    const colElement = document.getElementById(colId);
+
+    if (isCorrect) {
+      colElement.classList.add('correct-answer');
+      colElement.classList.remove('incorrect-answer');
+    } else {
+      colElement.classList.add('incorrect-answer');
+      colElement.classList.remove('correct-answer');
+    }
+  }
+</script>
 
 {% endblock %}

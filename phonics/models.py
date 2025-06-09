@@ -401,14 +401,14 @@ class EnglishAlphabet(models.Model):
     audio = models.FileField(upload_to='english_alphabet/audio/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if not self.audio:
-            tts = gTTS(self.letter)
+        if self.word and not self.audio:
+            tts = gTTS(self.word)
             audio_dir = os.path.join(settings.MEDIA_ROOT, 'english_alphabet/audio')
             os.makedirs(audio_dir, exist_ok=True)
-            audio_path = os.path.join(audio_dir, f'{self.letter}.mp3')
+            audio_path = os.path.join(audio_dir, f'{self.word}.mp3')
             tts.save(audio_path)
             self.audio.name = os.path.relpath(audio_path, settings.MEDIA_ROOT)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.letter
+        return self.word

@@ -7,6 +7,9 @@ Read and Listen
 {% block content %}
 {% load static %}
 {% load custom_filters %}
+
+
+  <section class="program-details-section fix section-padding" style="margin-top: 150px;">
   <div class="container p-4">
     <h1 class="display-4 fw-bold text-center mb-5">Read and Listen</h1>
     {% for item in read_listen %}
@@ -14,7 +17,7 @@ Read and Listen
         <h2 class="h3 fw-semibold text-primary">{{ item.heading }}</h2>
         <p class="text-muted">{{ item.text }}</p>
         {% if item.audio %}
-         <audio src="{{ item.audio.url }}" controls></audio>
+         <audio class="mt-4" src="{{ item.audio.url }}" controls></audio>
         {% endif %}
       </div>
     {% endfor %}
@@ -22,7 +25,7 @@ Read and Listen
       <p class="text-center text-muted">No items available.</p>
     {% endif %}
   </div>
-
+</section>
   <script>
     $(document).ready(function() {
       $('.play-pause-audio').click(function() {

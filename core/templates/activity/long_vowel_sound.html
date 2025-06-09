@@ -1,29 +1,79 @@
-{% extends 'base.html' %} 
-{% block title %} Long Vowel Sound Activity {%endblock %} 
-{% block content %} 
-{% load static %} 
+{% extends 'base.html' %}
+{% block title %} Long Vowel Sound Activity {% endblock %}
+{% block content %}
+{% load static %}
 {% load custom_filters %}
+
+<style>
+  .program-details-section {
+    margin-top: 100px; /* Added top margin */
+  }
+
+  .vowel-item {
+    border: 2px solid transparent;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    user-select: none;
+  }
+  .vowel-item img {
+    border-radius: 10px;
+    max-height: 180px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+  .vowel-item p {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0;
+    color: #34495e;
+  }
+
+  .vowel-item:hover:not(.disabled) {
+    box-shadow: 0 6px 15px rgb(0 149 255 / 0.3);
+    border-color: #0095ff;
+    background-color: #e6f2ff;
+  }
+
+  .vowel-item.correct {
+    background-color: #c8e6c9;
+    border-color: #2e7d32;
+    box-shadow: 0 0 10px #2e7d32aa;
+  }
+  .vowel-item.incorrect {
+    background-color: #ffcdd2;
+    border-color: #c62828;
+    box-shadow: 0 0 10px #c62828aa;
+  }
+  .vowel-item.disabled {
+    cursor: default;
+    opacity: 0.7;
+  }
+</style>
 
 <section class="program-details-section fix section-padding">
   <div class="container">
     <div class="program-details-wrapper">
-      <div class="row g-5">
-        
-          {% for sound in long_vowel_sounds %}
-          <div class="col-lg-4">
-          <div
-            class="vowel-item"
-            onclick="checkAnswer(this, '{{ sound.is_correct }}')"
-          >
-            <img src="{{ sound.image.url }}" width="100%" alt="{{ sound.word }}" />
-            <p>{{ sound.word }}</p>
-        </div>
-    </div>
-          {% endfor %}
+      <div class="row g-4">
+        {% for sound in long_vowel_sounds %}
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <div
+              class="vowel-item"
+              onclick="checkAnswer(this, '{{ sound.is_correct }}')"
+            >
+              <img src="{{ sound.image.url }}" alt="{{ sound.word }}" />
+              <p>{{ sound.word }}</p>
+            </div>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </section>
+
 <script>
   function checkAnswer(element, isCorrect) {
     if (element.classList.contains("disabled")) return;
@@ -39,12 +89,5 @@
     element.classList.add("disabled");
   }
 </script>
-<style>
-    .correct {
-        background-color: #00ff00;
-    }
-    .incorrect {
-        background-color: #ff0000;
-    }
-</style>
+
 {% endblock %}

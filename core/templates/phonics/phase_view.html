@@ -40,6 +40,9 @@ Phase Activity - {{ phase.phase }}
     }
   </style>
 </head>
+
+
+  <section class="program-details-section fix section-padding" style="margin-top: 150px;">
   <div class="container p-4">
     <h1 class="display-4 fw-bold text-center mb-5">Phase Activity - {{ phase.phase }}</h1>
 
@@ -47,45 +50,63 @@ Phase Activity - {{ phase.phase }}
       <div class="mb-5 phase-for-section" data-phase-for-id="{{ phase_for.id }}">
         <h2 class="h3 fw-semibold text-center text-primary mb-4">----- {{ phase_for.name }} -----</h2>
         <div class="row g-4 mb-4">
-          {% for word in phase_words %}
-          <ul>
-            {% if word.phase_for == phase_for %}
-              <li>{{ word.word }}</li>
-            {% endif %}
-          </ul>
-          {% endfor %}
+          <ul class="list-inline">
+  {% for word in phase_words %}
+    {% if word.phase_for == phase_for %}
+      <li class="list-inline-item me-2 mb-2">
+        <button 
+          type="button" 
+          class="btn btn-outline-primary btn-sm d-flex align-items-center"
+          data-audio-url="{{ word.audio.url }}"
+          {% if not word.audio %}disabled{% endif %}
+        >
+          {{ word.word }}
+          {% if word.audio %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up ms-2" viewBox="0 0 16 16">
+              <path d="M11.536 14.01a.5.5 0 0 1-.536-.406l-.396-2.462a.5.5 0 0 1 .25-.524l1.958-1.276a.5.5 0 0 1 .68.685l-1.73 2.15.416 2.28a.5.5 0 0 1-.142.05z"/>
+              <path d="M6.717 6.62 3.89 8.374a.5.5 0 0 1-.8-.4V7.732a.5.5 0 0 1 .8-.4l2.826 1.754a.5.5 0 0 1 .092.734z"/>
+              <path d="M8 3.5v9a1 1 0 0 1-1.555.832L3.172 11.5H2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1.172l3.273-1.832A1 1 0 0 1 8 3.5z"/>
+            </svg>
+          {% endif %}
+        </button>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
 
           
-          {% for word in phase_words %}
-            {% if word.phase_for == phase_for %}
-              <div class="col-md-4">
-                <div class="card p-3 shadow-sm">
-                  {% if word.image %}
-                    <img src="{{ word.image.url }}" alt="{{ word.word }}" class="img-fluid rounded mb-2">
-                  {% endif %}
-                  <div class="word-container">
-                    {% for letter in word.word %}
-                      {% if letter|lower in 'aeiou' %}
-                        <input type="text" class="vowel-input" maxlength="1" data-letter="{{ letter|lower }}">
-                      {% else %}
-                        <span class="consonant">{{ letter }}</span>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                  {% if word.audio %}
-                    <button 
-                      class="btn btn-primary btn-sm mt-2 mx-auto play-audio"
-                      data-audio-url="{{ word.audio.url }}"
-                    >
-                      <svg class="w-5 h-5 d-inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m-4.243-3.536v7.072m-4.243-10.607a9 9 0 0112.728 12.728 9 9 0 01-12.728-12.728z"></path>
-                      </svg>
-                    </button>
-                  {% endif %}
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
+          <div class="row">
+  {% for word in phase_words %}
+    {% if word.phase_for == phase_for %}
+      <div class="col-md-4 mb-4">
+        <div class="card p-3 shadow-sm h-100">
+          {% if word.image %}
+            <img src="{{ word.image.url }}" alt="{{ word.word }}" class="img-fluid rounded mb-2">
+          {% endif %}
+          <div class="word-container d-flex flex-wrap gap-1 justify-content-center fs-4">
+            {% for letter in word.word %}
+              {% if letter|lower in 'aeiou' %}
+                <input
+                  type="text"
+                  class="vowel-input form-control text-center"
+                  maxlength="1"
+                  size="1"
+                  data-letter="{{ letter|lower }}"
+                  autocomplete="off"
+                  style="width: 2.5rem;"
+                >
+              {% else %}
+                <span class="consonant px-2">{{ letter }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
         </div>
       </div>
     {% endfor %}
@@ -94,47 +115,72 @@ Phase Activity - {{ phase.phase }}
       <p class="text-center text-muted">No phase categories found for {{ phase.phase }}.</p>
     {% endif %}
   </div>
+</section>
 
-  <script>
-    $(document).ready(function() {
-      // Audio playback
-      $('.play-audio').click(function() {
-        var audioUrl = $(this).data('audio-url');
-        new Audio(audioUrl).play();
-      });
-
-      // Vowel input handling
-      $('.vowel-input').on('input', function() {
-        const expectedLetter = $(this).data('letter');
-        const card = $(this).closest('.card');
-        const inputs = card.find('.vowel-input');
-        const allCorrect = inputs.toArray().every(input => $(input).val().toLowerCase() === $(input).data('letter'));
-
-        if ($(this).val().toLowerCase() === expectedLetter) {
-          $(this).addClass('correct').removeClass('incorrect');
-          if (allCorrect) {
-            card.addClass('bg-success-subtle');
-            setTimeout(() => {
-              card.hide();
-              const phaseForSection = card.closest('.phase-for-section');
-              const remainingCards = phaseForSection.find('.card:visible');
-              if (remainingCards.length === 0) {
-                const nextPhaseFor = phaseForSection.next('.phase-for-section');
-                if (nextPhaseFor.length) {
-                  nextPhaseFor.find('.card').show();
-                } else {
-                  $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
-                }
-              }
-            }, 1000);
-          }
-        } else {
-          $(this).addClass('incorrect').removeClass('correct');
-          setTimeout(() => {
-            $(this).removeClass('incorrect').val('');
-          }, 1000);
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button[data-audio-url]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const audioUrl = btn.getAttribute('data-audio-url');
+        if(audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.play();
         }
       });
     });
-  </script>
+  });
+</script>
+
+<style>
+  .vowel-input.correct {
+    background-color: #d4edda !important; /* Bootstrap green bg */
+    border-color: #28a745 !important;
+    color: #155724 !important;
+  }
+  .vowel-input.incorrect {
+    background-color: #f8d7da !important; /* Bootstrap red bg */
+    border-color: #dc3545 !important;
+    color: #721c24 !important;
+  }
+  .vowel-input {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .consonant {
+    user-select: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('.vowel-input');
+
+    inputs.forEach(input => {
+      input.addEventListener('input', (e) => {
+        const expected = input.dataset.letter.toLowerCase();
+        const entered = input.value.toLowerCase();
+
+        if (entered === expected) {
+          input.classList.add('correct');
+          input.classList.remove('incorrect');
+          input.disabled = true;  // disable after correct input
+        } else if (entered.length === 1) {
+          input.classList.add('incorrect');
+          input.classList.remove('correct');
+        } else {
+          input.classList.remove('correct', 'incorrect');
+        }
+      });
+
+      // Optional: Allow only one character input
+      input.addEventListener('keydown', e => {
+        if (e.key.length === 1 && input.value.length >= 1) {
+          e.preventDefault();
+          input.value = ''; // clear previous char so user can type new
+        }
+      });
+    });
+  });
+</script>
+
+
   {% endblock %}

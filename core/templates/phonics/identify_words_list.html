@@ -22,79 +22,143 @@
       font-weight: bold;
     }
   </style>
+
+  
+
+<section class="program-details-section fix section-padding" style="margin-top: 150px;">
   <div class="container p-4">
     <h1 class="display-4 fw-bold text-center mb-5">Identify Words Activity - {{ level|title }}</h1>
-
-    {% for word in identify_words %}
-      <div class="mb-5 identify-word-section" data-word-id="{{ word.id }}">
-        <h2 class="h3 fw-semibold text-center text-primary mb-4">{{ word.name }}</h2>
-        <div class="d-flex flex-wrap gap-2 mb-4">
-          {% for option in indentidy_options %}
-            {% if option.identify_word == word %}
-              <div class="form-check form-check-inline">
-                <input 
-                  class="form-check-input option-radio" 
-                  type="radio" 
-                  name="options-{{ word.id }}" 
-                  id="option-{{ option.id }}" 
-                  value="{{ option.option }}" 
-                  data-is-correct="{% if option.is_correct %}true{% else %}false{% endif %}"
-                  data-option-id="{{ option.id }}"
-                >
-                <label class="form-check-label" for="option-{{ option.id }}">{{ option.option }}</label>
-              </div>
-            {% endif %}
-          {% endfor %}
-        </div>
-        <div class="row g-4 align-items-center">
-          <div class="col-md-6">
-            {% if word.image %}
-              <img src="{{ word.image.url }}" alt="{{ word.name }}" class="img-fluid rounded mx-auto d-block">
-            {% else %}
-              <p class="text-center text-muted">No image available</p>
-            {% endif %}
-          </div>
-          <div class="col-md-3">
-            <!-- Empty col-3 for activity space -->
-          </div>
-        </div>
+    <div class="row">
+  {% for word in identify_words %}
+      <div class="identify-word-section col-lg-4">
+        
+  <div class="card mb-5 border-primary shadow-sm" data-word-id="{{ word.id }}" style="max-width: 600px; margin: auto;">
+    <div class="row g-3 p-3 align-items-center">
+      
+      <!-- Image -->
+      <div class="col-12 text-center">
+        {% if word.image %}
+          <img src="{{ word.image.url }}" alt="{{ word.name }}" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;">
+        {% else %}
+          <div class="text-muted fst-italic py-5 border rounded">No image available</div>
+        {% endif %}
       </div>
-    {% endfor %}
 
-    {% if not identify_words %}
-      <p class="text-center text-muted mt-4">No words available for this level.</p>
-    {% endif %}
+      <!-- Word and Audio Button -->
+      <div class="col-12 d-flex justify-content-center align-items-center gap-3">
+        <h2 class="h3 fw-bold text-primary mb-0">{{ word.name }}</h2>
+        {% if word.audio %}
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline-primary p-2 play-audio-btn" 
+            aria-label="Play audio for {{ word.name }}"
+            data-audio-url="{{ word.audio.url }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-volume-up" viewBox="0 0 16 16">
+              <path d="M11.536 14.01a.5.5 0 0 0 .708-.708l-1.64-1.64a3 3 0 0 0-4.243 0l-3.182 3.182a.5.5 0 0 0 .708.708l3.182-3.182a2 2 0 0 1 2.829 0l1.536 1.536z"/>
+              <path d="M10.536 11.01a5 5 0 0 1 0-7.072l.708.708a4 4 0 0 0 0 5.656l-.708.708z"/>
+              <path d="M5 7.5v1h2.5l3 3V4.5l-3 3H5z"/>
+            </svg>
+          </button>
+        {% endif %}
+      </div>
+
+      <!-- Options -->
+      <div class="col-12 d-flex flex-wrap justify-content-center gap-3 mt-3">
+        {% for option in indentidy_options %}
+          {% if option.identify_word == word %}
+            <div class="form-check form-check-inline">
+              <input 
+                class="form-check-input option-radio" 
+                type="radio" 
+                name="options-{{ word.id }}" 
+                id="option-{{ option.id }}" 
+                value="{{ option.option }}" 
+                data-is-correct="{% if option.is_correct %}true{% else %}false{% endif %}"
+                data-option-id="{{ option.id }}"
+              >
+              <label class="form-check-label" for="option-{{ option.id }}">{{ option.option }}</label>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
   </div>
+      </div>
+{% endfor %}
+
+
+    </div>
+  </div>
+</section>
+
+
+<script>
+  // Play audio button handler (vanilla JS)
+  document.querySelectorAll('.play-audio-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const audioUrl = button.dataset.audioUrl;
+      if (audioUrl) {
+        new Audio(audioUrl).play();
+      }
+    });
+  });
+</script>
+<style>
+  /* Correct answer label */
+.correct,.form-check-inline.correct {
+  background-color: #d4edda; /* light green */
+  color: #155724;            /* dark green text */
+  border-radius: 0.375rem;   /* rounded corners */
+  padding: 0.25rem 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Incorrect answer label */
+.incorrect {
+  background-color: #f8d7da; /* light red */
+  color: #721c24;            /* dark red text */
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover and focus states for accessibility */
+.form-check-input:focus + .form-check-label {
+  outline: 2px solid #0056b3; /* blue focus outline */
+  outline-offset: 2px;
+}
+
+/* Disable pointer events on disabled radios' labels for clarity */
+.option-radio:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.7;
+  user-select: none;
+}
+
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script>
-    $(document).ready(function() {
-      $('.option-radio').on('change', function() {
-        const isCorrect = $(this).data('is-correct') === true;
-        const wordSection = $(this).closest('.identify-word-section');
-        const radios = wordSection.find('.option-radio');
-        const label = $(this).next('.form-check-label');
+ $(document).ready(function() {
+  $('.option-radio').on('change', function() {
+    const $this = $(this);
+    const wordSection = $this.closest('.identify-word-section');
+    const radios = wordSection.find('.option-radio');
+    const label = $this.next('.form-check-label');
+    const isCorrect = $this.data('is-correct') === true;
 
-        radios.prop('disabled', true);
-        if (isCorrect) {
-          label.addClass('correct').removeClass('incorrect');
-          setTimeout(() => {
-            wordSection.hide();
-            const nextSection = wordSection.next('.identify-word-section');
-            if (nextSection.length) {
-              nextSection.show();
-            } else {
-              $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
-            }
-          }, 1000);
-        } else {
-          label.addClass('incorrect').removeClass('correct');
-          setTimeout(() => {
-            $(this).prop('checked', false);
-            radios.prop('disabled', false);
-            label.removeClass('incorrect');
-          }, 1000);
-        }
-      });
-    });
+    // Disable all radios in this word section to prevent further changes
+    radios.prop('disabled', true);
+
+    if (isCorrect) {
+      label.addClass('correct').removeClass('incorrect');
+    } else {
+      label.addClass('incorrect').removeClass('correct');
+    }
+  });
+});
+
+
   </script>
 {% endblock %}

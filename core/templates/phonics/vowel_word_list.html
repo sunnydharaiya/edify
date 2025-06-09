@@ -11,6 +11,37 @@ Vowel Word List
 
 
 <section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container my-5">
+        <h2 class="mb-4 text-capitalize">{{ main_type }} vowel words</h2>
+      
+        <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Vowel</th>
+                <th colspan="10">Words</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for vowel, words in grouped_words.items %}
+              <tr>
+                <td class="fw-bold text-primary">{{ vowel }}</td>
+                {% for word in words %}
+                  <td>{{ word }} 
+                    {% if word.audio %}
+                    <button class="btn btn-sm btn-outline-primary ms-2 play-btn" data-audio="{{ word.audio.url }}">
+                        🔊
+                    </button>
+                    {% endif %}
+    
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+                  
+      </div>
+      
     <div class="container">
         <div class="program-details-wrapper">
             <div class="row g-5">
@@ -18,7 +49,7 @@ Vowel Word List
 
                 {% for vowel in vowels %}
                 <audio controls style="width:100%;" class="mt-5">
-                    <source src="https://fdahealth-in-772473.hostingersite.com/edify/uploads/vowels/short-vowels.m4a" type="audio/mp3">
+                    <source src="{{ vowel.audio.url }}" type="audio/mp3">
                 </audio>
                     {% for word in vowel.vowel_words.all %}
                         <div class="col-md-2 mb-4">

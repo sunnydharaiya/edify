@@ -1,132 +1,158 @@
-
 {% extends 'base.html' %}
 
 {% block title %}
-
-{{ alternative_spelling.name }}
+  Alternative Spelling - {{ alternative_spelling.name|title }}
 {% endblock %}
 
 {% block content %}
 {% load static %}
 {% load custom_filters %}
 
+<style>
+  .answer-btn {
+    cursor: move;
+    user-select: none;
+    min-width: 80px;
+  }
+  .drop-box {
+    min-height: 50px;
+    border: 2px dashed #6c757d;
+    border-radius: 0.375rem; /* rounded */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .drop-box.correct {
+    border-color: #28a745 !important;
+    background-color: #d4edda !important;
+    color: #155724;
+  }
+  .drop-box.incorrect {
+    border-color: #dc3545 !important;
+    background-color: #f8d7da !important;
+    color: #721c24;
+  }
+</style>
 
-  <style>
-    .answer-btn {
-      cursor: move;
-      user-select: none;
-    }
-    .drop-box {
-      min-height: 50px;
-      border: 2px dashed #6c757d;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f8f9fa;
-    }
-    .drop-box.correct {
-      border-color: #28a745;
-      background-color: #d4edda;
-    }
-    .drop-box.incorrect {
-      border-color: #dc3545;
-      background-color: #f8d7da;
-    }
-  </style>
 
-  <div class="container p-4">
-    <h1 class="display-4 fw-bold text-center mb-5">Alternative Spelling Activity - {{ alternative_spelling.name }}</h1>
+<section class="program-details-section fix section-padding" style="margin-top: 150px;">
+<div class="container py-5">
+  <h1 class="display-4 fw-bold text-center mb-5">
+    Alternative Spelling Activity<br>
+    <small class="text-muted">{{ alternative_spelling.name|title }}</small>
+  </h1>
 
-    <!-- Answer Buttons -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
-      {% for word in alternative_spelling_words %}
-        <button 
-          class="btn btn-outline-primary answer-btn" 
-          draggable="true" 
-          data-answer="{{ word.answer }}"
-          data-word-id="{{ word.id }}"
-        >
-          {{ word.answer }}
-        </button>
-      {% endfor %}
-    </div>
-
-    <!-- Sentences, Images, and Drop Boxes -->
-    <div class="row g-4">
-      {% for word in alternative_spelling_words %}
-        <div class="col-12">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <p class="mb-0">{{ word.sentence }}</p>
-            </div>
-            <div class="col-md-3">
-              {% if word.image %}
-                <img src="{{ word.image.url }}" alt="{{ word.answer }}" class="img-fluid rounded">
-              {% else %}
-                <p class="text-center text-muted">No image available</p>
-              {% endif %}
-            </div>
-            <div class="col-md-3">
-              <div 
-                class="drop-box" 
-                data-word-id="{{ word.id }}" 
-                data-correct-answer="{{ word.answer }}"
-              ></div>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
-    {% if not alternative_spelling_words %}
-      <p class="text-center text-muted mt-4">No words available for this activity.</p>
-    {% endif %}
+  <!-- Answer Buttons -->
+  <div class="d-flex flex-wrap gap-3 justify-content-center mb-5">
+    {% for word in alternative_spelling_words %}
+      <button 
+        type="button" 
+        class="btn btn-outline-primary answer-btn shadow-sm"
+        draggable="true" 
+        data-answer="{{ word.answer }}"
+        data-word-id="{{ word.id }}"
+        aria-label="Drag and drop {{ word.answer }}"
+      >
+        {{ word.answer|title }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="ms-2" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 3a.5.5 0 0 1 .5.5v6.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.498.498 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V3.5A.5.5 0 0 1 8 3z"/>
+        </svg>
+      </button>
+    {% endfor %}
   </div>
 
-  <script>
-    $(document).ready(function() {
-      const answerButtons = $('.answer-btn');
-      const dropBoxes = $('.drop-box');
+  <!-- Sentences, Images, Drop Boxes -->
+  <div class="row gy-4">
+    {% for word in alternative_spelling_words %}
+      <div class="col-6">
+        <div class="row align-items-center shadow-sm rounded p-3 bg-white">
+          <div class="col-md-6">
+            <p class="mb-0 fs-5">{{ word.sentence|linebreaksbr }}</p>
+          </div>
+          <div class="col-md-3 text-center">
+            {% if word.image %}
+              <img src="{{ word.image.url }}" alt="{{ word.answer|title }}" class="img-fluid rounded border" style="max-height: 150px; object-fit: contain;">
+            {% else %}
+              <div class="text-muted fst-italic small">No image available</div>
+            {% endif %}
+          </div>
+          <div class="col-md-3 d-flex justify-content-center">
+            <div 
+              class="drop-box w-100" 
+              role="textbox"
+              tabindex="0"
+              aria-label="Drop answer here"
+              data-word-id="{{ word.id }}" 
+              data-correct-answer="{{ word.answer }}"
+            ></div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 
-      answerButtons.on('dragstart', function(e) {
-        e.originalEvent.dataTransfer.setData('text/plain', $(this).data('word-id'));
-        $(this).addClass('opacity-50');
+  {% if not alternative_spelling_words %}
+    <p class="text-center text-muted mt-5 fs-5">No words available for this activity.</p>
+  {% endif %}
+</div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const answerButtons = document.querySelectorAll('.answer-btn');
+    const dropBoxes = document.querySelectorAll('.drop-box');
+
+    answerButtons.forEach(btn => {
+      btn.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', btn.dataset.wordId);
+        btn.classList.add('opacity-50');
       });
-
-      answerButtons.on('dragend', function() {
-        $(this).removeClass('opacity-50');
+      btn.addEventListener('dragend', () => {
+        btn.classList.remove('opacity-50');
       });
+    });
 
-      dropBoxes.on('dragover', function(e) {
+    dropBoxes.forEach(box => {
+      box.addEventListener('dragover', e => {
         e.preventDefault();
-        $(this).addClass('bg-secondary-subtle');
+        box.classList.add('bg-secondary-subtle');
       });
-
-      dropBoxes.on('dragleave', function() {
-        $(this).removeClass('bg-secondary-subtle');
+      box.addEventListener('dragleave', () => {
+        box.classList.remove('bg-secondary-subtle');
       });
-
-      dropBoxes.on('drop', function(e) {
+      box.addEventListener('drop', e => {
         e.preventDefault();
-        $(this).removeClass('bg-secondary-subtle');
-        const wordId = e.originalEvent.dataTransfer.getData('text/plain');
-        const button = $(`.answer-btn[data-word-id="${wordId}"]`);
-        const correctAnswer = $(this).data('correct-answer');
-        const droppedAnswer = button.data('answer');
+        box.classList.remove('bg-secondary-subtle');
+        const wordId = e.dataTransfer.getData('text/plain');
+        const btn = document.querySelector(`.answer-btn[data-word-id="${wordId}"]`);
+        const correctAnswer = box.dataset.correctAnswer;
+        const droppedAnswer = btn ? btn.dataset.answer : null;
 
         if (droppedAnswer === correctAnswer) {
-          $(this).text(droppedAnswer).addClass('correct').removeClass('incorrect');
-          button.hide();
-          const remainingButtons = $('.answer-btn:visible');
-          if (remainingButtons.length === 0) {
-            $('<p class="text-center text-success fw-bold mt-4">All activities completed!</p>').insertAfter('.container');
+          box.textContent = droppedAnswer;
+          box.classList.add('correct');
+          box.classList.remove('incorrect');
+          if (btn) btn.style.display = 'none';
+
+          const remaining = document.querySelectorAll('.answer-btn:not([style*="display: none"])');
+          if (remaining.length === 0) {
+            const container = document.querySelector('.container');
+            const doneMsg = document.createElement('p');
+            doneMsg.className = 'text-center text-success fw-bold mt-4 fs-4';
+            doneMsg.textContent = '🎉 All activities completed!';
+            container.appendChild(doneMsg);
           }
         } else {
-          $(this).addClass('incorrect');
-          setTimeout(() => $(this).removeClass('incorrect'), 1000);
+          box.classList.add('incorrect');
+          setTimeout(() => box.classList.remove('incorrect'), 1000);
         }
       });
     });
-  </script>
-  {% endblock %}
+  });
+</script>
+
+{% endblock %}

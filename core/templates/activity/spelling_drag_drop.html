@@ -1,153 +1,190 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Spelling Drag and Drop
+  Spelling Drag and Drop
 {% endblock %}
 
 {% block content %}
 {% load static %}
 {% load custom_filters %}
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9fafb;
-            margin: 20px;
-            color: #333;
-        }
-        h3 {
-            margin-bottom: 10px;
-            color: #007bff;
-        }
-        .all-words-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .btn-li {
-            background-color: #f0f4f8;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            cursor: grab;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            text-align: center;
-        }
-        .btn-li:hover {
-            background-color: #d0e6ff;
-        }
-        .btn-li:active {
-            cursor: grabbing;
-        }
-        .btn-li[draggable="false"] {
-            cursor: default;
-            opacity: 0.6;
-            background-color: #b8e986;
-            border-color: #6aaf36;
-        }
-        .row.droppable-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .droppable-box {
-            border: 2px dashed #999;
-            border-radius: 8px;
-            min-height: 100px;
-            padding: 15px;
-            background: #fafafa;
-            transition: background-color 0.3s ease;
-        }
-        .droppable-box.dragover {
-            background-color: #d0f0fd;
-            border-color: #39a0ff;
-        }
-        .droppable-box ul {
-            list-style: none;
-            padding-left: 0;
-            margin-top: 10px;
-        }
-    </style>
 
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    margin: 20px 0;
+    color: #2c3e50;
+  }
+  h3 {
+    margin-bottom: 15px;
+    color: #3498db;
+    font-weight: 700;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
 
+  .all-words-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  .btn-li {
+    background-color: #ffffff;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1.5px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    cursor: grab;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    user-select: none;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .btn-li:hover {
+    background-color: #d9ebff;
+    border-color: #3498db;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+  }
+  .btn-li:active {
+    cursor: grabbing;
+    background-color: #a9d1ff;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .btn-li[draggable="false"] {
+    cursor: default;
+    opacity: 0.65;
+    background-color: #a8e6a1;
+    border-color: #5cb85c;
+    box-shadow: none;
+    color: #2f6627;
+  }
 
+  .row.droppable-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
 
+  .droppable-box {
+    border: 3px dashed #b0bec5;
+    border-radius: 14px;
+    min-height: 130px;
+    padding: 20px 18px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .droppable-box.dragover {
+    background-color: #d0f0fd;
+    border-color: #2980b9;
+    box-shadow: 0 0 12px 3px #2980b9aa;
+  }
 
-<section class="program-details-section fix section-padding">
-    <div class="container">
-        <div class="program-details-wrapper">
-            <div class="row g-5">
-                <div class="col-lg-12">
-                    
+  .droppable-box > b {
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+    color: #34495e;
+    user-select: none;
+  }
 
-    {% for group in spelling_groups %}
-    <h3>{{ group.name }}</h3>
+  .droppable-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .droppable-list .btn-li {
+    cursor: default;
+    user-select: none;
+    background-color: #a8e6a1;
+    border-color: #5cb85c;
+    color: #2f6627;
+    box-shadow: none;
+  }
+</style>
 
-    <div class="all-words-box">
-        {% for stype in group.spelling_types.all %}
-            {% for word in stype.words.all %}
-                <div class="btn-li draggable" data-id="{{ stype.id }}" draggable="true" id="word-{{ word.id }}">
+<section class="program-details-section fix section-padding" style="margin-top: 100px;">
+  <div class="container p-4">
+    <div class="program-details-wrapper">
+      <div class="row g-5">
+        <div class="col-lg-12">
+
+          {% for group in spelling_groups %}
+            <h3>{{ group.name }}</h3>
+
+            <div class="all-words-box">
+              {% for stype in group.spelling_types.all %}
+                {% for word in stype.words.all %}
+                  <div class="btn-li draggable" data-id="{{ stype.id }}" draggable="true" id="word-{{ word.id }}">
                     {{ word.word }}
-                </div>
-            {% endfor %}
-        {% endfor %}
-    </div>
-
-    <div class="row droppable-types">
-        {% for stype in group.spelling_types.all %}
-            <div class="droppable-box" id="stype-{{ stype.id }}">
-                <b>{{ stype.name }}</b>
-                <ul class="droppable-list"></ul>
+                  </div>
+                {% endfor %}
+              {% endfor %}
             </div>
-        {% endfor %}
+
+            <div class="row droppable-types">
+              {% for stype in group.spelling_types.all %}
+                <div class="droppable-box" id="stype-{{ stype.id }}">
+                  <b>{{ stype.name }}</b>
+                  <ul class="droppable-list"></ul>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+        </div>
+      </div>
     </div>
-    {% endfor %}
-</div>
-</div>
-</div>
-</div>
+  </div>
 </section>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        let draggedItem = null;
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let draggedItem = null;
 
-        document.querySelectorAll('.draggable').forEach(item => {
-            item.addEventListener('dragstart', e => {
-                draggedItem = e.target;
-                e.dataTransfer.effectAllowed = 'move';
-            });
-        });
-
-        document.querySelectorAll('.droppable-box').forEach(dropZone => {
-            dropZone.addEventListener('dragover', e => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('dragover');
-            });
-
-            dropZone.addEventListener('drop', e => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                
-                if (draggedItem) {
-                    if (draggedItem.getAttribute('data-id') === dropZone.id.replace('stype-', '')) {
-                        const ul = dropZone.querySelector('.droppable-list');
-                        ul.appendChild(draggedItem);
-                        draggedItem.setAttribute('draggable', 'false');
-                        draggedItem.style.cursor = 'default';
-                    } else {
-                        alert('Incorrect category! Try again.');
-                    }
-                    draggedItem = null;
-                }
-            });
-        });
+    document.querySelectorAll('.draggable').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        draggedItem = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+      });
     });
-    </script>
+
+    document.querySelectorAll('.droppable-box').forEach(dropZone => {
+      dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+      });
+
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+
+        if (draggedItem) {
+          if (draggedItem.getAttribute('data-id') === dropZone.id.replace('stype-', '')) {
+            const ul = dropZone.querySelector('.droppable-list');
+            ul.appendChild(draggedItem);
+            draggedItem.setAttribute('draggable', 'false');
+            draggedItem.style.cursor = 'default';
+          } else {
+            alert('Incorrect category! Try again.');
+          }
+          draggedItem = null;
+        }
+      });
+    });
+  });
+</script>
 
 {% endblock %}

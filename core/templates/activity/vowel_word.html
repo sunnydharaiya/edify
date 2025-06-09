@@ -7,54 +7,65 @@ Vowel Word
 {% block content %}
 {% load static %}
 {% load custom_filters %}
-  
-
-
-
 
 <section class="program-details-section fix section-padding" style="margin-top: 300px;">
-    <div class="container">
-        <div class="program-details-wrapper">
-            <div class="row g-5">
-                {% for vowel_word in vowel_words %}
-                <div class="col-md-3 mb-3">
-                    <div class="btn btn-primary w-100 d-flex justify-content-between align-items-center" 
-                         onclick="toggleSelection(this, '{{ vowel_word.vowel_type }}')">
-                        <button class="btn btn-outline-light play-btn" onclick="event.stopPropagation(); playAudio('{{ vowel_word.audio_file.url }}')">
-                            🎵
-                        </button>
-                        <span>{{ vowel_word.word }}</span>
-                    </div>
-                </div>
-            {% endfor %}
+  <div class="container">
+    <div class="program-details-wrapper">
+      <div class="row g-5">
+        {% for vowel_word in vowel_words %}
+          <div class="col-md-3 mb-3">
+            <div
+              class="btn btn-primary w-100 d-flex justify-content-between align-items-center vowel-btn"
+              onclick="toggleSelection(this, '{{ vowel_word.vowel_type }}')"
+            >
+              <button
+                class="btn btn-outline-light play-btn"
+                onclick="event.stopPropagation(); playAudio('{{ vowel_word.audio_file.url }}')"
+                type="button"
+                aria-label="Play audio for {{ vowel_word.word }}"
+              >
+                🎵
+              </button>
+              <span>{{ vowel_word.word }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
 
 <script>
-        function playAudio(audioUrl) {
-        const audio = new Audio(audioUrl);
-        audio.play();
-    }
+  function playAudio(audioUrl) {
+    const audio = new Audio(audioUrl);
+    audio.play();
+  }
 
-    function toggleSelection(element, vowelType) {
-        if (vowelType === 'short') {
-            element.classList.toggle('btn-success');
-        } else {
-            element.classList.toggle('btn-danger');
-        }
-        element.classList.toggle('btn-primary');
+  function toggleSelection(element, vowelType) {
+    if (vowelType === 'short') {
+      element.classList.toggle('btn-success');
+      element.classList.remove('btn-danger');
+    } else {
+      element.classList.toggle('btn-danger');
+      element.classList.remove('btn-success');
     }
+    element.classList.toggle('btn-primary');
+  }
 </script>
 
 <style>
-    .play-btn {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-    }
+  .play-btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .vowel-btn {
+    cursor: pointer;
+  }
 </style>
-            </div>
-        </div>
-    </div>
-</section>
-
 
 {% endblock %}

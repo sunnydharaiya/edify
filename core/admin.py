@@ -2,8 +2,6 @@ from django.contrib import admin
 from .models import Category,Blog
 from ckeditor.widgets import CKEditorWidget
 from django import forms
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
 
 
 
@@ -27,12 +25,6 @@ class BlogAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     readonly_fields = ('created_at', 'updated_at')
 
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    fieldsets = BaseUserAdmin.fieldsets + (
-        ('Custom Fields', {'fields': ('categories',)}),
-    )
-    filter_horizontal = ('categories',)
 
 
 

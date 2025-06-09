@@ -10,20 +10,29 @@ Blend
 {% load static %}
 {% load custom_filters %}
 
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+  <div class="container">
+    <h1 class="text-center mb-5">{{ level|capfirst }} Level Blends</h1>
 
-<h1>{{ level|capfirst }} Level Blends</h1>
-
-{% if blends %}
-    <ul>
-    {% for blend in blends %}
-        <li>
-            <a href="{% url 'blend_for_list' blend.id %}">
-                {{ blend.type }}
+    {% if blends %}
+    <div class="row justify-content-center">
+      {% for blend in blends %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="card h-100 text-center shadow-sm border-0">
+          <div class="card-body d-flex flex-column justify-content-center">
+            <h5 class="card-title">{{ blend.type }}</h5>
+            <a href="{% url 'blend_for_list' blend.id %}" class="btn btn-primary mt-3">
+              View Activities
             </a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No blends found for this level.</p>
-{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-muted">No blends found for this level.</p>
+    {% endif %}
+  </div>
+</section>
+
 {% endblock %}

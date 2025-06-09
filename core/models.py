@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 class ClassificationType(models.TextChoices):
@@ -24,11 +23,3 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class User(AbstractUser):
-    categories = models.ManyToManyField(
-        Category,
-        blank=True,
-        related_name='users'
-    )

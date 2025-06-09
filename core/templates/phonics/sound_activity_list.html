@@ -7,48 +7,117 @@ Sound Activity
 {% block content %}
 {% load static %}
 {% load custom_filters %}
-
-<h1>{{ position|capfirst }} Sound Activities for {{ level|capfirst }} Level</h1>
-
-{% if activity_options %}
-    <div class="row">
-    {% for item in activity_options %}
-        {% with activity=item.activity hidden_letter=item.hidden_letter options=item.options %}
-        <div class="game-instance col-md-4 text-center" style="margin-bottom:30px;" data-type="{{ position }}">
-            {% if activity.image %}
-                <img src="{{ activity.image.url }}" alt="{{ activity.word }}" width="150"
-                     style="border: 1px solid #25345342; height: 150px; margin-bottom: 15px; padding: 10px;">
-            {% endif %}
-            
+<section class="program-details-section fix section-padding" style="margin-top: 300px;">
+    <div class="container">
+      <h1 class="text-center mb-5">{{ position|capfirst }} Sound Activities for {{ level|capfirst }} Level</h1>
+  
+      {% if activity_options %}
+      <div class="row">
+        {% for item in activity_options %}
+         
+      
+          {% with activity=item.activity hidden_letter=item.hidden_letter options=item.options %}
+          <div class="game-instance col-md-4 text-center" style="margin-bottom:30px;" data-type="{{ position }}">
+          {% if item.activity.image %}
+            <img src="{{ item.activity.image.url }}" alt="{{ item.activity.word }}" width="150"
+                style="border: 1px solid #25345342; height: 150px; margin-bottom: 15px; padding: 10px;">
+          {% endif %}
+   
+           
+  
             <div class="word" style="font-size: 24px; margin-bottom: 15px;">
-                {% for letter in activity.word %}
-                    <span class="letter" data-letter="{{ letter|lower }}">{{ letter }}</span>
-                {% endfor %}
-                <span class="i-bg" onclick="speak('{{ activity.word }}')" style="cursor:pointer;">
-                    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
-                </span>
+              {% for letter in activity.word %}
+                <span class="letter" data-letter="{{ letter|lower }}">{{ letter }}</span>
+              {% endfor %}
+              <span class="i-bg" onclick="speak('{{ activity.word }}')" style="cursor:pointer;">
+                <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+              </span>
             </div>
-
+  
             <div class="alternatives" style="margin-top: 10px;">
-                {% for letter in options %}
-                    <button class="option" data-correct="{{ hidden_letter|lower }}">{{ letter }}</button>
-                {% endfor %}
+              {% for letter in options %}
+                <button class="option" data-correct="{{ hidden_letter|lower }}">{{ letter }}</button>
+              {% endfor %}
             </div>
-
+  
             {% if activity.audio %}
-                <audio controls style="margin-top: 15px; width: 100%;">
-                    <source src="{{ activity.audio.url }}" type="audio/mp3">
-                </audio>
+              <audio id="audio-{{ forloop.counter }}" style="display: none;">
+                <source src="{{ activity.audio.url }}" type="audio/mp3">
+              </audio>
             {% endif %}
-        </div>
-        {% endwith %}
-    {% endfor %}
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-center">No activities found for this category and position.</p>
+      {% endif %}
     </div>
-{% else %}
-    <p>No activities found for this category and position.</p>
-{% endif %}
-
-
+  </section>
+  
+  <style>
+    .game-instance {
+      border: 1px solid #eee;
+      padding: 20px;
+      border-radius: 12px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+  
+    .game-instance:hover {
+      transform: translateY(-5px);
+    }
+  
+    .word {
+      letter-spacing: 5px;
+      font-weight: 600;
+    }
+  
+    .letter {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 2px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      text-transform: uppercase;
+      color: #000;
+    }
+    .correct-letter{
+        text-transform: uppercase;
+    }
+  
+    .option {
+      margin: 4px;
+      padding: 8px 12px;
+      background-color: #e7f0fd;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+  
+    .option:hover {
+      background-color: #d0e2fb;
+    }
+  
+    .i-bg {
+      margin-left: 10px;
+      font-size: 20px;
+      color: #007bff;
+    }
+  
+    .option.correct {
+      background-color: #d4edda !important;
+    }
+  
+    .option.incorrect {
+      background-color: #f8d7da !important;
+    }
+  </style>
+    
 <script>
 document.querySelectorAll('.game-instance').forEach(gameInstance => {
     const wordSpans = gameInstance.querySelectorAll('.word span.letter'); // letter spans only

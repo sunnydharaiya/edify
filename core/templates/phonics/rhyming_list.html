@@ -9,6 +9,12 @@ Rhyming Activity - {{ level|title }}
 {% load custom_filters %}
   <script src="https://cdn.tailwindcss.com"></script>
 
+
+  
+<section class="program-details-section fix section-padding" style="margin-top: 150px;">
+  <div class="container">
+    <div class="program-details-wrapper">
+      <div class="row g-4">
   <div class="max-w-4xl mx-auto">
     <h1 class="text-3xl font-bold text-center mb-8">Rhyming Activity - {{ level|title }}</h1>
     
@@ -33,16 +39,28 @@ Rhyming Activity - {{ level|title }}
         <!-- Draggable Words (RhymingWord) -->
         <div class="word-pool flex flex-wrap gap-2 mb-8">
           {% for word in rhyming_words|shuffle %}
-            {% if word.rhyming_for.type == rhyme %}
-              <div
-                class="word bg-yellow-200 px-3 py-1 rounded-full text-sm font-medium cursor-move select-none"
-                draggable="true"
-                data-word-id="{{ word.id }}"
-                data-rhyming-for-id="{{ word.rhyming_for.id }}"
-              >
-                {{ word.word }}
-              </div>
-            {% endif %}
+           {% if word.rhyming_for.type == rhyme %}
+  <div
+    class="flex items-center gap-2 bg-yellow-200 px-4 py-2 rounded-full text-sm font-medium shadow cursor-move select-none"
+    draggable="true"
+    data-word-id="{{ word.id }}"
+    data-rhyming-for-id="{{ word.rhyming_for.id }}"
+  >
+    {{ word.word }}
+
+    {% if word.audio %}
+      <button
+        type="button"
+        onclick="playAudio('{{ word.audio.url }}')"
+        class="bg-blue-500 text-white rounded-full px-2 py-1 text-xs hover:bg-blue-600 transition"
+        title="Play Sound"
+      >
+        🔊
+      </button>
+    {% endif %}
+  </div>
+{% endif %}
+
           {% endfor %}
         </div>
         {% if not rhyming_words %}
@@ -54,6 +72,16 @@ Rhyming Activity - {{ level|title }}
       <p class="text-center text-gray-600">No rhyming categories found for the {{ level }} level.</p>
     {% endif %}
   </div>
+  </div>
+  </div>
+  </div>
+</section>
+<script>
+  function playAudio(url) {
+    const audio = new Audio(url);
+    audio.play();
+  }
+</script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {

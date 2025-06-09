@@ -10,6 +10,8 @@ English Alphabets
 {% load static %}
 {% load custom_filters %}
 
+  
+<section class="program-details-section fix section-padding" style="margin-top: 150px;">
   <div class="container p-4">
     <h1 class="display-4 fw-bold text-center mb-5">English Alphabet List</h1>
     <table class="table table-bordered table-striped">
@@ -25,15 +27,20 @@ English Alphabets
             {% if words %}
               <tr>
                 <td class="fw-bold">{{ letter }}</td>
-                <td>
-                  {% for word in words %}
-                    {{ word.word }}
-                    {% if word.image %}
-                      <img src="{{ word.image.url }}" alt="{{ word.word }}" class="img-fluid ms-2 me-2" style="max-width: 100px; max-height: 100px;">
-                    {% endif %}
-                    {% if not forloop.last %} | {% endif %}
-                  {% endfor %}
-                </td>
+               <td>
+  <div class="d-flex flex-wrap gap-2">
+    {% for word in words %}
+      <button
+        type="button"
+        class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+        onclick="playAudio('{{ word.audio.url }}')"
+      >
+        🔊 {{ word.word }}
+      </button>
+    {% endfor %}
+  </div>
+</td>
+
               </tr>
             {% endif %}
           {% endwith %}
@@ -44,4 +51,14 @@ English Alphabets
       <p class="text-center text-muted mt-4">No alphabet entries available.</p>
     {% endif %}
   </div>
+  </div>
+
+  
+<script>
+  function playAudio(url) {
+    const audio = new Audio(url);
+    audio.play();
+  }
+</script>
+
   {% endblock %}
